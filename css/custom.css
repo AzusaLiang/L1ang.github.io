@@ -1,0 +1,216 @@
+/* 首页文章卡片 */
+#recent-posts > .recent-post-item{
+  background:rgba(255, 255, 255, 0.8);
+}
+/* 首页侧栏卡片 */
+.card-widget{
+background:rgba(255, 255, 255, 0.8)!important;
+}
+/* 文章页面正文背景 */
+div#post{
+background: rgba(255, 255, 255, 0.8);
+}
+/* 分页页面 */
+div#page{
+background: rgba(255, 255, 255, 0.8);
+}
+/* 归档页面 */
+div#archive{
+background: rgba(255, 255, 255, 0.8);
+}
+/* 标签页面 */
+div#tag{
+background: rgba(255, 255, 255, 0.8);
+}
+/* 分类页面 */
+div#category{
+background: rgba(255, 255, 255, 0.8);
+}
+
+/* 页脚透明 */
+#footer{
+  background: transparent!important;
+}
+/* 头图透明 */
+#page-header{
+  background: transparent!important;
+}
+/*白天模式伪类遮罩层透明*/
+[data-theme="light"]
+  #footer::before{
+      background: transparent!important;
+    }
+/*夜间模式伪类遮罩层透明*/
+[data-theme="dark"]
+  #footer::before{
+      background: transparent!important;
+    }
+[data-theme="dark"]
+  #page-header::before{
+    background: transparent!important;
+    }
+/*夜间模式页面背景设置为半透明*/
+[data-theme="dark"]
+  div.recent-post-item{
+      background: rgba(0, 0, 0, 0.5)!important;
+    }
+[data-theme="dark"]
+  #aside-content .card-widget{
+      background: rgba(0, 0, 0, 0.5)!important;
+    }
+[data-theme="dark"]
+  div#post{
+    background: rgba(0, 0, 0, 0.5)!important;
+    }
+[data-theme="dark"]
+  div#page{
+    background: rgba(0, 0, 0, 0.5)!important;
+    }
+[data-theme="dark"]
+  div#archive{
+    background: rgba(0, 0, 0, 0.5)!important;
+    }
+[data-theme="dark"]
+  div#tag{
+    background: rgba(0, 0, 0, 0.5)!important;
+  }
+[data-theme="dark"]
+  div#category{
+    background: rgba(0, 0, 0, 0.5)!important;
+  }
+  
+/*阅读模式*/
+.read-mode #aside-content .card-widget{
+      background: rgba(158, 204, 171, 0.5)!important;
+    }
+.read-mode div#post{
+    background: rgba(158, 204, 171, 0.5)!important;
+    }
+/*夜间阅读模式*/
+[data-theme="dark"]
+  .read-mode #aside-content .card-widget{
+        background: rgba(0, 0, 0, 0.5)!important;
+        color: #eeeeee;
+      }
+[data-theme="dark"]  
+  .read-mode div#post{
+      background: rgba(0, 0, 0, 0.5)!important;
+      color: #eeeeee;
+      }
+/* 导航栏居中 */
+#navFn{
+flex: 1;
+text-align: right;
+}
+#nav
+  #search-button{
+    display: inline;
+    padding: 0 0 0 0.3rem ;
+    position: relative;
+    padding-bottom: 0.3rem;
+    text-shadow: 0.05rem 0.05rem 0.1rem rgb(0 0 0 / 30%);
+    cursor: pointer;
+}
+
+@font-face {
+    font-family: 'tzy';
+    /* 字体名自定义即可 */
+    src: url('https://cdn.jsdelivr.net/gh/tzy13755126023/BLOG_SOURCE/font/ZhuZiAWan.woff2');
+    /* 字体文件路径 */
+    font-display: swap;
+}
+
+body,
+.gitcalendar {
+    font-family: tzy !important;
+}
+
+/* card卡片图片填充 */
+
+#recent-posts>.recent-post-item .post_cover img.post_bg {
+    object-fit: fill !important;
+}
+
+#error-wrap {
+  top: 40%;
+}
+
+#error-wrap .error-content .error-info .error_title {
+  margin-top: -3rem !important;
+}
+
+#error-wrap .error-content {
+  box-shadow: none !important;
+  border-radius: 12px;
+  background: var(--hassan-card-bg) !important;
+}
+
+.aside-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  bottom: 0px;
+  position: absolute;
+  padding: 1rem;
+  width: 100%;
+  overflow: scroll;
+}
+
+.aside-list .aside-list-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  max-width: 1500px;
+  text-align: center;
+}
+@media screen and (min-width: 768px) {
+  .aside-list .aside-list-group {
+    margin: 0px 17%; //17% 适合最新文章数为5个，10% 适合6个
+  }
+}
+
+.aside-list .aside-list-item {
+  padding: 0.5rem;
+}
+
+.aside-list .aside-list-item img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+.aside-list .aside-list-item img:hover {
+  transform: scale(1.1);
+}
+
+.aside-list .aside-list-item .thumbnail {
+  overflow: hidden;
+  width: 230px;
+  height: 143px;
+  display: flex;
+  background: var(--hassan-card-bg);
+}
+
+.aside-list .aside-list-item .content .title {
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-height: 1.5;
+  justify-content: center;
+  align-items: flex-end;
+  align-content: center;
+  padding-top: 0.5rem;
+  color: var(--hassan-fontcolor);
+}
+
+.aside-list .aside-list-item .content time {
+  display: none;
+}
+
+#error-wrap .error-content .error-info a {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+
