@@ -74,12 +74,13 @@
       </categories>
       <tags>
         <tag>渗透</tag>
+        <tag>提权</tag>
       </tags>
   </entry>
   <entry>
     <title>DC-2</title>
     <url>/2022/04/15/DC-2/</url>
-    <content><![CDATA[<p>攻击机：192.168.168.128<br>靶机：靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+    <content><![CDATA[<p>渗透环境: DC-2 (<a href="https://www.vulnhub.com/entry/dc-2,311/">https://www.vulnhub.com/entry/dc-2,311/</a>)<br>攻击机：192.168.168.128<br>靶机：靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
 <h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><h3 id="使用nmap扫描存活的主机"><a href="#使用nmap扫描存活的主机" class="headerlink" title="使用nmap扫描存活的主机"></a>使用nmap扫描存活的主机</h3><p>老规矩上nmap</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">namp -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
 
@@ -146,6 +147,7 @@
       </categories>
       <tags>
         <tag>渗透</tag>
+        <tag>提权</tag>
       </tags>
   </entry>
   <entry>
